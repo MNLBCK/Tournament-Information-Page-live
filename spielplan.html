@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spielplan | Spieltag-Info</title>
+    <title>Turnier | Spieltag-Info</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -11,7 +11,7 @@
     <header class="card hero">
       <div class="subpage-header">
         <img class="host-logo" src="Host_Logo.png" alt="Gastgeberlogo SG Hochberg/Hochdorf" />
-        <p id="pageMeta" data-subtitle="Spielplan">Turnier am --.--.---- | Spielplan</p>
+        <p id="pageMeta" data-subtitle="Turnier">Turnier am --.--.---- | Turnier</p>
       </div>
       <nav class="top-nav">
   <a class="button secondary" href="index.html" data-nav="index">Start</a>
@@ -23,14 +23,13 @@
     </header>
     <main>
       <section class="card schedule-card" id="schedule">
-        <p class="hint">Suche nach Spielfeld, Mannschaft oder Verein.</p>
+        <p class="hint">Suche nach Feld/Gruppe, Mannschaft oder Verein.</p>
         <div class="search-grid">
-          <select id="searchField"><option value="">Alle Spielfelder</option></select>
-          <select id="searchGroup"><option value="">Alle Gruppen</option></select>
-          <input id="searchTeam" type="search" list="teamSuggestions" placeholder="Mannschaft" />
-          <datalist id="teamSuggestions"></datalist>
-          <input id="searchClub" type="search" list="clubSuggestions" placeholder="Verein" />
-          <datalist id="clubSuggestions"></datalist>
+          <div id="fieldFilterPills" class="pill-filter" role="group" aria-label="Feld-Filter"></div>
+          <div class="autocomplete-wrap">
+            <input id="searchTerm" type="search" placeholder="Mannschaft oder Verein" autocomplete="off" />
+            <div id="searchSuggestions" class="autocomplete-list" role="listbox" aria-label="Vorschläge"></div>
+          </div>
         </div>
         <div id="scheduleMeta" class="meta"></div>
         <div id="scheduleList" class="match-list"></div>

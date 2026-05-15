@@ -1,5 +1,7 @@
 # Tournament-Information-Page
 
+![Website-Logo](logo.svg)
+
 Statische, mobilefreundliche Website für Spieltags- und Turnierinformationen (GitHub Pages kompatibel).
 
 ## IST-Stand
