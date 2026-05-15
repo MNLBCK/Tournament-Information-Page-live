@@ -1,7 +1,13 @@
 {
   "catering": {
-    "offerings": ["Kaffee", "Wasser", "Obstbecher", "Brötchen", "Würstchen"],
+    "offerings": [
+      "Kaffee",
+      "Wasser",
+      "Obstbecher",
+      "Brötchen",
+      "Würstchen"
+    ],
     "payment": "Barzahlung und Karte möglich",
-    "notes": "Bitte Mehrwegbecher bevorzugen."
+    "notes": "s. Aushang am Kiosk"
   }
 }

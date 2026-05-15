@@ -1,84 +1,15 @@
-:root {
-  --bg: #f6f8fb;
-  --card: #ffffff;
-  --text: #19212a;
-  --muted: #5c6a78;
-  --primary: #0d6efd;
-  --border: #d6dee8;
-  --accent: #14b8a6;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.4;
-}
-
-body.theme-kids-football {
-  --bg: linear-gradient(180deg, #e0f2fe 0%, #f0fdf4 50%, #fef9c3 100%);
-  --card: #ffffff;
-  --text: #1f2937;
-  --muted: #475569;
-  --primary: #16a34a;
-  --border: #86efac;
-  --accent: #f97316;
-}
-
-header, main, footer { width: min(980px, 100% - 1.5rem); margin-inline: auto; }
-main { display: grid; gap: 0.9rem; padding-bottom: 1.5rem; }
-
-.card { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.9rem; }
-.hero { margin: 0.9rem auto; }
-h1, h2, h3, p { margin: 0 0 0.6rem; }
-ul { margin: 0; padding-left: 1.1rem; }
-.hint, .meta, small { color: var(--muted); }
-
-.top-nav, .upload-row, .search-grid, .auth-grid { display: grid; gap: 0.55rem; margin: 0.7rem 0; }
-.top-nav { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
-.search-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-.auth-grid { grid-template-columns: 1fr auto; align-items: center; }
-
-input[type='search'], input[type='password'], input[type='file'] {
-  border: 1px solid var(--border); border-radius: 0.55rem; padding: 0.55rem; width: 100%; background: #fff;
-}
-input[type='file'] { display: none; }
-
-.button {
-  border: none; border-radius: 0.55rem; background: var(--primary); color: #fff;
-  padding: 0.55rem 0.75rem; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none;
-}
-.button.secondary { background: #334155; }
-
-.match-list { display: grid; gap: 0.6rem; }
-.match-card { border: 1px solid var(--border); border-radius: 0.6rem; padding: 0.65rem; }
-.match-header { display: flex; justify-content: space-between; gap: 0.5rem; }
-
-pre {
-  overflow-x: auto; background: #0f172a; color: #e2e8f0; border-radius: 0.55rem;
-  padding: 0.75rem; margin: 0; font-size: 0.83rem;
-}
-
-.error-text { color: #b91c1c; font-weight: 600; }
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-
-footer { text-align: center; padding: 0 0 1.25rem; }
-
-.host-logo {
-  width: 120px;
-  height: auto;
-  display: block;
-  margin: 0.5rem auto 1rem;
-}
+:root { --bg:#f6f8fb; --card:#fff; --text:#19212a; --muted:#5c6a78; --primary:#0d6efd; --border:#d6dee8; --accent:#14b8a6; }
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.4}
+body.theme-kids-football{--bg:linear-gradient(180deg,#e0f2fe 0%,#f0fdf4 50%,#fef9c3 100%);--text:#1f2937;--muted:#475569;--primary:#16a34a;--border:#86efac;--accent:#f97316}
+header,main,footer{width:min(980px,100% - 1rem);margin-inline:auto}main{display:grid;gap:.8rem;padding-bottom:1.25rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:.75rem;padding:.75rem}.hero{margin:.6rem auto;position:sticky;top:.25rem;z-index:5}
+h1,h2,h3,p{margin:0 0 .5rem}ul{margin:0;padding-left:1.1rem}.hint,.meta,small{color:var(--muted)}
+.top-nav,.search-grid{display:grid;gap:.45rem;margin:.55rem 0}.top-nav{grid-template-columns:repeat(5,minmax(0,1fr))}.search-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+input[type='search'],select{border:1px solid var(--border);border-radius:.5rem;padding:.48rem;width:100%;background:#fff}
+.button{border:none;border-radius:.5rem;background:var(--primary);color:#fff;padding:.45rem .55rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;font-size:.9rem}
+.button.secondary{background:#334155}.button.active{outline:2px solid var(--accent);background:#0f172a}
+.match-list{display:grid;gap:.5rem;scroll-margin-top:11rem}.match-card{border:1px solid var(--border);border-radius:.6rem;padding:.6rem;background:#fff}.match-card.is-running{border:2px solid var(--accent);background:#fff7ed}
+.match-header{display:flex;justify-content:space-between;gap:.5rem}
+footer{text-align:center;padding:0 0 1.25rem}.host-logo{width:86px;height:auto;display:block;margin:.2rem auto .5rem}
+@media (max-width:700px){.top-nav{grid-template-columns:repeat(3,minmax(0,1fr))}.search-grid{grid-template-columns:1fr}.hero{padding:.55rem}.button{font-size:.82rem;padding:.4rem .45rem}}

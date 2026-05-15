@@ -6,28 +6,980 @@
     "location": "SKV Hochberg, Waldallee 70, 71686 Remseck"
   },
   "matches": [
-    {"time":"10:00","field":"Feld A","group":"Gruppe A","home":{"club":"SG Hochberg/H'dorf","team":"SG Hochberg/H'dorf 1"},"away":{"club":"FC Marbach","team":"FC Marbach 1"}},
-    {"time":"10:00","field":"Feld B","group":"Gruppe B","home":{"club":"SG Hochberg/H'dorf","team":"SG Hochberg/H'dorf 2"},"away":{"club":"TSV Ludwigsburg","team":"TSV Ludwigsburg 1"}},
-    {"time":"10:00","field":"Feld C","group":"Gruppe C","home":{"club":"FC Marbach","team":"FC Marbach 2"},"away":{"club":"FC Gerlingen","team":"FC Gerlingen 2"}},
-    {"time":"10:00","field":"Feld D","group":"Gruppe D","home":{"club":"SG Hochberg/H'dorf","team":"SG Hochberg/H'dorf 3"},"away":{"club":"TSV Benningen","team":"TSV Benningen 2020"}},
-    {"time":"10:00","field":"Feld E","group":"Gruppe E","home":{"club":"SG Hochberg/H'dorf","team":"SG Hochberg/H'dorf 4"},"away":{"club":"TSV Ludwigsburg","team":"TSV Ludwigsburg 2"}},
-
-    {"time":"10:10","field":"Feld A","group":"Gruppe A","home":{"club":"FC Gerlingen","team":"FC Gerlingen 1"},"away":{"club":"FSV 08 Bi-Bi","team":"FSV 08 Bi-Bi 1"}},
-    {"time":"10:10","field":"Feld B","group":"Gruppe B","home":{"club":"TSV Benningen","team":"TSV Benningen 2019"},"away":{"club":"GSV Erdmannhausen","team":"GSV Erdmannhausen 1"}},
-    {"time":"10:10","field":"Feld C","group":"Gruppe C","home":{"club":"DjK Ludwigsburg","team":"DjK Ludwigsburg 2"},"away":{"club":"FSV Oßweil","team":"FSV Oßweil 2"}},
-    {"time":"10:10","field":"Feld D","group":"Gruppe D","home":{"club":"GSV Erdmannhausen","team":"GSV Erdmannhausen 2"},"away":{"club":"FSV Oßweil","team":"FSV Oßweil 3"}},
-    {"time":"10:10","field":"Feld E","group":"Gruppe E","home":{"club":"SV Freudental","team":"SV Freudental"},"away":{"club":"DjK Ludwigsburg","team":"DjK Ludwigsburg 3"}},
-
-    {"time":"10:20","field":"Feld A","group":"Gruppe A","home":{"club":"SG Hochberg/H'dorf","team":"SG Hochberg/H'dorf 1"},"away":{"club":"FSV Oßweil","team":"FSV Oßweil 1"}},
-    {"time":"10:20","field":"Feld B","group":"Gruppe B","home":{"club":"DjK Ludwigsburg","team":"DjK Ludwigsburg 1"},"away":{"club":"FSV 08 Bi-Bi","team":"FSV 08 Bi-Bi 2"}},
-    {"time":"10:20","field":"Feld C","group":"Gruppe C","home":{"club":"SpVgg Bissingen","team":"SpVgg Bissingen 1"},"away":{"club":"SV Poppenweiler","team":"SV Poppenweiler 1"}},
-    {"time":"10:20","field":"Feld D","group":"Gruppe D","home":{"club":"SG Hochberg/H'dorf","team":"SG Hochberg/H'dorf 3"},"away":{"club":"SpVgg Bissingen","team":"SpVgg Bissingen 2"}},
-    {"time":"10:20","field":"Feld E","group":"Gruppe E","home":{"club":"FSV Oßweil","team":"FSV Oßweil 4"},"away":{"club":"FC Marbach","team":"FC Marbach 3"}},
-
-    {"time":"10:30","field":"Feld A","group":"Gruppe A","home":{"club":"FC Marbach","team":"FC Marbach 1"},"away":{"club":"FC Gerlingen","team":"FC Gerlingen 1"}},
-    {"time":"10:30","field":"Feld B","group":"Gruppe B","home":{"club":"TSV Ludwigsburg","team":"TSV Ludwigsburg 1"},"away":{"club":"GSV Erdmannhausen","team":"GSV Erdmannhausen 1"}},
-    {"time":"10:30","field":"Feld C","group":"Gruppe C","home":{"club":"FC Gerlingen","team":"FC Gerlingen 2"},"away":{"club":"FSV Oßweil","team":"FSV Oßweil 2"}},
-    {"time":"10:30","field":"Feld D","group":"Gruppe D","home":{"club":"TSV Benningen","team":"TSV Benningen 2020"},"away":{"club":"GSV Erdmannhausen","team":"GSV Erdmannhausen 2"}},
-    {"time":"10:30","field":"Feld E","group":"Gruppe E","home":{"club":"TSV Ludwigsburg","team":"TSV Ludwigsburg 2"},"away":{"club":"DjK Ludwigsburg","team":"DjK Ludwigsburg 3"}}
+    {
+      "time": "10:00",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "10:00",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 2"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 3"
+      }
+    },
+    {
+      "time": "10:00",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 2"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "10:00",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 1"
+      }
+    },
+    {
+      "time": "10:00",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 4"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 2"
+      }
+    },
+    {
+      "time": "10:10",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      },
+      "away": {
+        "club": "SV Poppenweiler",
+        "team": "SV Poppenweiler 1"
+      }
+    },
+    {
+      "time": "10:10",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2019"
+      },
+      "away": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 2"
+      }
+    },
+    {
+      "time": "10:10",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 2"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 3"
+      }
+    },
+    {
+      "time": "10:10",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      }
+    },
+    {
+      "time": "10:10",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SV Freudental",
+        "team": "SV Freudental"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "10:20",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "10:20",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 1"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      }
+    },
+    {
+      "time": "10:20",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 1"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "10:20",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      }
+    },
+    {
+      "time": "10:20",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 4"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      }
+    },
+    {
+      "time": "10:30",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 2"
+      }
+    },
+    {
+      "time": "10:30",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      },
+      "away": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2020"
+      }
+    },
+    {
+      "time": "10:30",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 2"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 2"
+      }
+    },
+    {
+      "time": "10:30",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2020"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 1"
+      }
+    },
+    {
+      "time": "10:30",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 2"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "10:40",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "10:40",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 2"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 3"
+      }
+    },
+    {
+      "time": "10:40",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 2"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "10:40",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 1"
+      }
+    },
+    {
+      "time": "10:40",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 4"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 2"
+      }
+    },
+    {
+      "time": "10:50",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      },
+      "away": {
+        "club": "SV Poppenweiler",
+        "team": "SV Poppenweiler 1"
+      }
+    },
+    {
+      "time": "10:50",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2019"
+      },
+      "away": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 2"
+      }
+    },
+    {
+      "time": "10:50",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 2"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 3"
+      }
+    },
+    {
+      "time": "10:50",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      }
+    },
+    {
+      "time": "10:50",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SV Freudental",
+        "team": "SV Freudental"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "11:00",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "11:00",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 1"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      }
+    },
+    {
+      "time": "11:00",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 1"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "11:00",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      }
+    },
+    {
+      "time": "11:00",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 4"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      }
+    },
+    {
+      "time": "11:10",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 2"
+      }
+    },
+    {
+      "time": "11:10",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      },
+      "away": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2020"
+      }
+    },
+    {
+      "time": "11:10",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 2"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 2"
+      }
+    },
+    {
+      "time": "11:10",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2020"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 1"
+      }
+    },
+    {
+      "time": "11:10",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 2"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "11:20",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "11:20",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 2"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 3"
+      }
+    },
+    {
+      "time": "11:20",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 2"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "11:20",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 1"
+      }
+    },
+    {
+      "time": "11:20",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 4"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 2"
+      }
+    },
+    {
+      "time": "11:30",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      },
+      "away": {
+        "club": "SV Poppenweiler",
+        "team": "SV Poppenweiler 1"
+      }
+    },
+    {
+      "time": "11:30",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2019"
+      },
+      "away": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 2"
+      }
+    },
+    {
+      "time": "11:30",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 2"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 3"
+      }
+    },
+    {
+      "time": "11:30",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      }
+    },
+    {
+      "time": "11:30",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SV Freudental",
+        "team": "SV Freudental"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "11:40",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "11:40",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 1"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      }
+    },
+    {
+      "time": "11:40",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 1"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "11:40",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      }
+    },
+    {
+      "time": "11:40",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 4"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      }
+    },
+    {
+      "time": "11:50",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 2"
+      }
+    },
+    {
+      "time": "11:50",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      },
+      "away": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2020"
+      }
+    },
+    {
+      "time": "11:50",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 2"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 2"
+      }
+    },
+    {
+      "time": "11:50",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2020"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 1"
+      }
+    },
+    {
+      "time": "11:50",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 2"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "12:00",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "12:00",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 2"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 3"
+      }
+    },
+    {
+      "time": "12:00",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 2"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "12:00",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 1"
+      }
+    },
+    {
+      "time": "12:00",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 4"
+      },
+      "away": {
+        "club": "FSV 08 Bi-Bi",
+        "team": "FSV 08 Bi-Bi 2"
+      }
+    },
+    {
+      "time": "12:10",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      },
+      "away": {
+        "club": "SV Poppenweiler",
+        "team": "SV Poppenweiler 1"
+      }
+    },
+    {
+      "time": "12:10",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "TSV Benningen",
+        "team": "TSV Benningen 2019"
+      },
+      "away": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 2"
+      }
+    },
+    {
+      "time": "12:10",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 2"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 3"
+      }
+    },
+    {
+      "time": "12:10",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      },
+      "away": {
+        "club": "FC Gerlingen",
+        "team": "FC Gerlingen 1"
+      }
+    },
+    {
+      "time": "12:10",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "SV Freudental",
+        "team": "SV Freudental"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 1"
+      }
+    },
+    {
+      "time": "12:20",
+      "field": "Feld A",
+      "group": "Gruppe A",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 1"
+      },
+      "away": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 2"
+      }
+    },
+    {
+      "time": "12:20",
+      "field": "Feld B",
+      "group": "Gruppe B",
+      "home": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 1"
+      },
+      "away": {
+        "club": "GSV Erdmannhausen",
+        "team": "GSV Erdmannhausen 2"
+      }
+    },
+    {
+      "time": "12:20",
+      "field": "Feld C",
+      "group": "Gruppe C",
+      "home": {
+        "club": "SpVgg Bissingen",
+        "team": "SpVgg Bissingen 1"
+      },
+      "away": {
+        "club": "DjK Ludwigsburg",
+        "team": "DjK Ludwigsburg 3"
+      }
+    },
+    {
+      "time": "12:20",
+      "field": "Feld D",
+      "group": "Gruppe D",
+      "home": {
+        "club": "SG Hochberg/H'dorf",
+        "team": "SG Hochberg/H'dorf 3"
+      },
+      "away": {
+        "club": "FC Marbach",
+        "team": "FC Marbach 1"
+      }
+    },
+    {
+      "time": "12:20",
+      "field": "Feld E",
+      "group": "Gruppe E",
+      "home": {
+        "club": "FSV Oßweil",
+        "team": "FSV Oßweil 4"
+      },
+      "away": {
+        "club": "TSV Ludwigsburg",
+        "team": "TSV Ludwigsburg 1"
+      }
+    }
   ]
 }
