@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spielplan | Spieltag-Info</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="card hero">
+      <h1>Spielplan</h1>
+      <nav class="top-nav">
+        <a class="button secondary" href="index.html">Start</a>
+        <a class="button secondary" href="verpflegung.html">Verpflegung</a>
+        <a class="button secondary" href="anfahrt.html">Anfahrt</a>
+        <a class="button secondary" href="spielfeldlayout.html">Spielfeldlayout</a>
+      </nav>
+    </header>
+    <main>
+      <section class="card" id="schedule">
+        <p class="hint">Suche nach Spielfeld, Mannschaft oder Verein.</p>
+        <div class="upload-row">
+          <label for="scheduleFile" class="button secondary">JSON-Spielplan laden</label>
+          <input type="file" id="scheduleFile" accept="application/json" />
+          <button id="loadSample" class="button">Beispiel laden</button>
+        </div>
+        <div class="search-grid">
+          <input id="searchField" type="search" placeholder="Spielfeld" />
+          <input id="searchTeam" type="search" placeholder="Mannschaft" />
+          <input id="searchClub" type="search" placeholder="Verein" />
+        </div>
+        <div id="scheduleMeta" class="meta"></div>
+        <div id="scheduleList" class="match-list"></div>
+      </section>
+
+      <section class="card" id="json-format">
+        <h2>JSON-Format (Beispiel)</h2>
+        <pre id="jsonExample"></pre>
+      </section>
+    </main>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

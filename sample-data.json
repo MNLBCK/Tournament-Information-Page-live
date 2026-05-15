@@ -1,0 +1,54 @@
+{
+  "event": {
+    "name": "Frühjahrs-Spieltag U10",
+    "date": "2026-06-13",
+    "startTime": "09:00",
+    "location": "Sportplatz Musterstadt"
+  },
+  "quickInfo": [
+    "Anreise ab 08:15 Uhr möglich.",
+    "Mannschaftsbesprechung je Team 20 Minuten vor erstem Spiel.",
+    "Siegerehrung geplant um 14:45 Uhr."
+  ],
+  "catering": {
+    "offerings": ["Kaffee", "Wasser", "Obstbecher", "Brötchen", "Würstchen"],
+    "payment": "Barzahlung und Karte möglich",
+    "notes": "Bitte Mehrwegbecher bevorzugen."
+  },
+  "directions": {
+    "address": "Musterweg 10, 12345 Musterstadt",
+    "parking": "Parkplätze am Vereinsheim und auf der Wiese neben Platz 2.",
+    "publicTransport": "Buslinie 4 bis Haltestelle Sportzentrum."
+  },
+  "fieldLayout": {
+    "summary": "Drei Kleinfelder quer auf dem Hauptplatz.",
+    "fields": [
+      { "field": "Feld 1", "group": "Gruppe A" },
+      { "field": "Feld 2", "group": "Gruppe B" },
+      { "field": "Feld 3", "group": "Gruppe C" }
+    ]
+  },
+  "matches": [
+    {
+      "time": "09:00",
+      "field": "Feld 1",
+      "group": "Gruppe A",
+      "home": { "club": "SV Grün", "team": "SV Grün 1" },
+      "away": { "club": "FC Blau", "team": "FC Blau 1" }
+    },
+    {
+      "time": "09:20",
+      "field": "Feld 1",
+      "group": "Gruppe A",
+      "home": { "club": "SV Grün", "team": "SV Grün 2" },
+      "away": { "club": "TSV Rot", "team": "TSV Rot 1" }
+    },
+    {
+      "time": "09:40",
+      "field": "Feld 2",
+      "group": "Gruppe B",
+      "home": { "club": "FC Blau", "team": "FC Blau 2" },
+      "away": { "club": "TSV Rot", "team": "TSV Rot 2" }
+    }
+  ]
+}
