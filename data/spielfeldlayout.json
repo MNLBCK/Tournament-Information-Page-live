@@ -1,6 +1,11 @@
 {
   "fieldLayout": {
-    "summary": "Spieltag am 16.05.2026 beim SKV Hochberg mit fünf Feldern/Gruppen (A-E).",
+    "title": "Spielfelder",
+    "summary": "Übersicht über Spielfelder, Coaching-Zonen, Tummelzone, Kiosk und WCs.",
+    "image": {
+      "url": "https://github.com/user-attachments/assets/a6d3df81-560d-4ee5-9eaa-b4ac443cd850",
+      "alt": "Spielfeld- und Lageplan mit den Spielfeldern A bis E, Tummelzone, Kiosk und WCs."
+    },
     "fields": [
       { "field": "Feld A", "group": "Gruppe A" },
       { "field": "Feld B", "group": "Gruppe B" },

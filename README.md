@@ -11,7 +11,7 @@ Die Website besteht aus einer Startseite und separaten Unterseiten:
 - `index.html` – Startseite mit Kurzinformationen, Countdown bis zum ersten Anpfiff und Navigation
 - `verpflegung.html` – Verpflegungsinformationen
 - `anfahrt.html` – Anfahrt, Parken, ÖPNV
-- `spielfeldlayout.html` – Layout und Gruppen je Spielfeld
+- `spielfeldlayout.html` – Seite „Spielfelder“ mit Lageplan
 - `spielplan.html` – kompakter Spielplan mit Filterung, Dropdowns und Autocomplete
 
 Auf der Startseite werden zusätzlich angezeigt:

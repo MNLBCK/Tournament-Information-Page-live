@@ -46,6 +46,9 @@ footer{text-align:center;padding:0 0 1.25rem}
 .hero-headline p{margin-bottom:0}
 .subpage-header{display:flex;align-items:center;gap:.6rem;font-weight:600;color:var(--muted)}
 .subpage-header #pageMeta{margin:0}
+.field-layout-title{margin-bottom:.35rem}
+.field-layout-figure{margin:.75rem 0 0}
+.field-layout-image{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:.75rem;background:#fff}
 @media (max-width:700px){
   .top-nav{grid-template-columns:repeat(3,minmax(0,1fr))}
   .search-grid{grid-template-columns:1fr}

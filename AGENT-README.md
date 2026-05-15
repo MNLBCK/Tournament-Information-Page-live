@@ -81,6 +81,12 @@ Pflichtfelder:
 - `fieldLayout.summary` (String)
 - `fieldLayout.fields` (Array)
 
+Optionale Felder:
+
+- `fieldLayout.title` (String)
+- `fieldLayout.image.url` (String)
+- `fieldLayout.image.alt` (String)
+
 Pro Feld:
 
 - `field` (z. B. `Feld 1`)

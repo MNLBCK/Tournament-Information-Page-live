@@ -68,7 +68,11 @@ function renderInfo(data) {
   const noticeHtml = d.notice ? `<p><strong>Hinweis:</strong> ${d.notice}</p>` : '';
   setHtml(elements.directionsContent, `<p><strong>Adresse:</strong><br />${addressHtml}</p>${websiteHtml}${noticeHtml}<p><strong>Parken:</strong> ${d.parking ?? '-'}</p>`);
   const f = data.fieldLayout ?? {};
-  setHtml(elements.fieldLayoutContent, `<p>${f.summary ?? '-'}</p>${createList((f.fields ?? []).map((x) => `${x.field}: ${x.group}`))}`);
+  const fieldListHtml = createList((f.fields ?? []).map((x) => `${x.field}: ${x.group}`));
+  const imageHtml = f.image?.url
+    ? `<figure class="field-layout-figure"><img class="field-layout-image" src="${f.image.url}" alt="${f.image.alt ?? 'Spielfelder'}" loading="lazy" /></figure>`
+    : fieldListHtml;
+  setHtml(elements.fieldLayoutContent, `<h2 class="field-layout-title">${f.title ?? 'Spielfeldlayout'}</h2><p>${f.summary ?? '-'}</p>${imageHtml}`);
   renderCountdown(data);
 }
 
