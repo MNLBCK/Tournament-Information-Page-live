@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Turnier Icon">
+  <defs>
+    <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f9d976"/>
+      <stop offset="50%" stop-color="#e0ac2b"/>
+      <stop offset="100%" stop-color="#b8830e"/>
+    </linearGradient>
+    <clipPath id="bc">
+      <circle cx="32" cy="17" r="8"/>
+    </clipPath>
+  </defs>
+
+  <!-- Green rounded background -->
+  <rect width="64" height="64" rx="10" fill="#1f7a39"/>
+
+  <!-- Trophy body (open top) -->
+  <path d="M18 23 L46 23 L43 41 Q32 46 21 41 Z" fill="url(#fg)" stroke="#8a6205" stroke-width="1.5"/>
+  <!-- Open top edge -->
+  <line x1="18" y1="23" x2="46" y2="23" stroke="#8a6205" stroke-width="2"/>
+
+  <!-- Left handle -->
+  <path d="M18 27 Q12 29 13 35 Q14 40 20 39" fill="none" stroke="#c8921e" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Right handle -->
+  <path d="M46 27 Q52 29 51 35 Q50 40 44 39" fill="none" stroke="#c8921e" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Stem -->
+  <rect x="28" y="41" width="8" height="5" rx="1.5" fill="#c8921e" stroke="#8a6205" stroke-width="1"/>
+  <!-- Base top -->
+  <rect x="24" y="46" width="16" height="4" rx="1.5" fill="#c8921e" stroke="#8a6205" stroke-width="1"/>
+  <!-- Base dark -->
+  <rect x="21" y="50" width="22" height="7" rx="2.5" fill="#5a3e22" stroke="#3d2a16" stroke-width="1"/>
+
+  <!-- Soccer ball sitting on open cup -->
+  <circle cx="32" cy="17" r="9" fill="#ffffff" stroke="#1f1f1f" stroke-width="1.5"/>
+  <g clip-path="url(#bc)">
+    <!-- Center pentagon -->
+    <polygon points="32,13.5 35.5,16 34,20 30,20 28.5,16" fill="#1f1f1f"/>
+    <!-- Top-left patch -->
+    <polygon points="24,11 27,14 25.5,17 23,16" fill="#1f1f1f"/>
+    <!-- Top-right patch -->
+    <polygon points="40,11 37,14 38.5,17 41,16" fill="#1f1f1f"/>
+    <!-- Bottom-left patch -->
+    <polygon points="27,21 29.5,20.5 30,24 28,25" fill="#1f1f1f"/>
+    <!-- Bottom-right patch -->
+    <polygon points="37,21 34.5,20.5 34,24 36,25" fill="#1f1f1f"/>
+  </g>
+</svg>
