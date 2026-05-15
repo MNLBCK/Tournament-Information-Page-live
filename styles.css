@@ -1,6 +1,6 @@
 :root { --bg:#f6f8fb; --card:#fff; --text:#19212a; --muted:#5c6a78; --primary:#0d6efd; --border:#d6dee8; --accent:#14b8a6; }
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.4}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);background-repeat:no-repeat;background-size:cover;color:var(--text);line-height:1.4}
 body.theme-kids-football{--bg:linear-gradient(180deg,#e0f2fe 0%,#f0fdf4 50%,#fef9c3 100%);--text:#1f2937;--muted:#475569;--primary:#16a34a;--border:#86efac;--accent:#f97316}
 header,main,footer{width:min(980px,100% - 1rem);margin-inline:auto}
 main{display:grid;gap:.8rem;padding-bottom:1.25rem}
