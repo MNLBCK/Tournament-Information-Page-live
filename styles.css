@@ -33,6 +33,17 @@ input[type='search'],select{border:1px solid var(--border);border-radius:.5rem;p
 .match-line{margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .match-card.is-running{border:2px solid var(--accent);background:#fff7ed}
 .match-header{display:flex;justify-content:space-between;gap:.5rem}
+#kickoffCountdown{text-align:center;padding:.5rem 0}
+.cd-grid{display:inline-flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center}
+.cd-box{display:flex;flex-direction:column;align-items:center;background:var(--primary);color:#fff;border-radius:.75rem;padding:.65rem 1rem;min-width:5rem;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.cd-num{font-size:2.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.cd-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;opacity:.85;margin-top:.25rem}
+.cd-sep{font-size:2.2rem;font-weight:800;color:var(--primary);line-height:1;padding-bottom:.9rem;animation:cd-blink 1s step-start infinite}
+@keyframes cd-blink{50%{opacity:0}}
+#cdSeconds{display:inline-block;animation:cd-pulse 1s ease-in-out infinite}
+@keyframes cd-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.cd-done{font-size:1.15rem;font-weight:700;color:var(--primary);margin:0}
+@media(max-width:400px){.cd-num{font-size:2rem}.cd-box{min-width:4rem;padding:.5rem .7rem}}
 footer{text-align:center;padding:0 0 1.25rem}
 .catering-heading{margin:.8rem 0 .3rem;font-size:1rem}
 .catering-table{width:100%;border-collapse:collapse;margin-bottom:.6rem}
