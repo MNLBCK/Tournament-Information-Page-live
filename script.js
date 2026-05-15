@@ -6,7 +6,6 @@ const elements = {
   directionsContent: document.querySelector('#directionsContent'),
   fieldLayoutContent: document.querySelector('#fieldLayoutContent'),
   scheduleList: document.querySelector('#scheduleList'),
-  scheduleMeta: document.querySelector('#scheduleMeta'),
   pageMeta: document.querySelector('#pageMeta'),
   filters: {
     searchTerm: document.querySelector('#searchTerm'),
@@ -15,8 +14,8 @@ const elements = {
   searchSuggestions: document.querySelector('#searchSuggestions')
 };
 
-const state = { data: null, countdownTimer: null, siteTitle: '', activeField: '', searchPool: [] };
-const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
+const state = { data: null, countdownTimer: null, siteTitle: '', activeField: '', searchPool: [], fieldColors: {} };
+const hasScheduleUi = Boolean(elements.scheduleList);
 
 const createList = (items = []) => `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
 const setHtml = (node, html) => { if (node) node.innerHTML = html; };
@@ -100,7 +99,6 @@ function renderMatches() {
   const allMatches = state.data.matches ?? [];
   const filtered = allMatches.filter((match) => matchesFilter(match, currentFilters()));
 
-  elements.scheduleMeta.textContent = `${event.name ?? 'Turnier'} · ${formatDateDE(event.date ?? '-')} · ${event.startTime ?? '-'} · ${event.location ?? '-'} · ${filtered.length}/${allMatches.length} Spiele`;
   if (!filtered.length) {
     elements.scheduleList.innerHTML = '<p>Keine Spiele mit diesen Filtern gefunden.</p>';
     return;
@@ -117,8 +115,9 @@ function renderMatches() {
 
     const fieldName = m.field || m.group;
     const fieldClass = `field-${fieldName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    const colorClass = state.fieldColors[fieldName.toLowerCase()] ?? '';
 
-    return `<article id="${id}" class="match-card ${fieldClass}${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${m.time}</strong><span class="pill field-pill">${fieldName}</span></div><p class="match-line">${m.home.team} : ${m.away.team}</p></article>`;
+    return `<article id="${id}" class="match-card ${fieldClass}${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${m.time}</strong><span class="pill field-pill ${colorClass}">${fieldName}</span></div><p class="match-line">${m.home.team} : ${m.away.team}</p></article>`;
   }).join('');
 
   if (firstActiveId) document.getElementById(firstActiveId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -148,11 +147,15 @@ function populateScheduleFilters() {
   const fields = uniq(matches.map((m) => m.field || m.group));
   state.searchPool = uniq(matches.flatMap((m) => [m.home.team, m.away.team, m.home.club, m.away.club]));
 
+  const PILL_PALETTE = ['pill-c0', 'pill-c1', 'pill-c2', 'pill-c3', 'pill-c4', 'pill-c5'];
+  fields.forEach((f, i) => { state.fieldColors[f.toLowerCase()] = PILL_PALETTE[i % PILL_PALETTE.length]; });
+
   if (elements.filters.fieldPills) {
     const pills = ['Alle', ...fields].map((name) => {
       const value = name === 'Alle' ? '' : name;
       const active = value === state.activeField;
-      return `<button type="button" class="pill${active ? ' is-active' : ''}" data-field="${value}">${name}</button>`;
+      const colorClass = name === 'Alle' ? '' : ` ${state.fieldColors[name.toLowerCase()]}`;
+      return `<button type="button" class="pill${colorClass}${active ? ' is-active' : ''}" data-field="${value}">${name}</button>`;
     }).join('');
     elements.filters.fieldPills.innerHTML = pills;
   }
@@ -229,6 +232,6 @@ async function init() {
 }
 
 init().catch((error) => {
-  if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message;
+  if (elements.scheduleList) elements.scheduleList.innerHTML = `<p class="hint">${error.message}</p>`;
   console.error(error);
 });
