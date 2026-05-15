@@ -9,16 +9,13 @@ const elements = {
   scheduleMeta: document.querySelector('#scheduleMeta'),
   pageMeta: document.querySelector('#pageMeta'),
   filters: {
-    field: document.querySelector('#searchField'),
-    group: document.querySelector('#searchGroup'),
-    team: document.querySelector('#searchTeam'),
-    club: document.querySelector('#searchClub')
+    searchTerm: document.querySelector('#searchTerm'),
+    fieldPills: document.querySelector('#fieldFilterPills')
   },
-  teamSuggestions: document.querySelector('#teamSuggestions'),
-  clubSuggestions: document.querySelector('#clubSuggestions')
+  searchSuggestions: document.querySelector('#searchSuggestions')
 };
 
-const state = { data: null, countdownTimer: null, siteTitle: '' };
+const state = { data: null, countdownTimer: null, siteTitle: '', activeField: '', searchPool: [] };
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
 
 const createList = (items = []) => `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
@@ -56,32 +53,28 @@ function renderInfo(data) {
   const ac = data.awardCeremony ?? {};
   setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${tm.time ?? '-'} Uhr, ${tm.location ?? '-'}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${ac.time ? `, geplant um ${ac.time} Uhr` : ''}${ac.location ? ` (${ac.location})` : ''}.` : 'Nein.'}</p>`);
   const c = data.catering ?? {};
-  setHtml(elements.cateringContent, `${createList(c.offerings)}<p><strong>Zahlung:</strong> ${c.payment ?? '-'}</p><p><strong>Hinweis:</strong> ${c.notes ?? '-'}</p>`);
+  setHtml(elements.cateringContent, `${createList(c.offerings)}<p><strong>Hinweis:</strong> ${c.notes ?? '-'}</p>`);
   const d = data.directions ?? {};
   const addressHtml = (d.address ?? '-').replace(/\n/g, '<br />');
   const websiteHtml = d.website ? `<p><strong>Website:</strong> <a href="${d.website}" target="_blank" rel="noopener noreferrer">${d.website}</a></p>` : '';
   const noticeHtml = d.notice ? `<p><strong>Hinweis:</strong> ${d.notice}</p>` : '';
-  setHtml(elements.directionsContent, `<p><strong>Adresse:</strong><br />${addressHtml}</p>${websiteHtml}${noticeHtml}<p><strong>Parken:</strong> ${d.parking ?? '-'}</p><p><strong>ÖPNV:</strong> ${d.publicTransport ?? '-'}</p>`);
+  setHtml(elements.directionsContent, `<p><strong>Adresse:</strong><br />${addressHtml}</p>${websiteHtml}${noticeHtml}<p><strong>Parken:</strong> ${d.parking ?? '-'}</p>`);
   const f = data.fieldLayout ?? {};
   setHtml(elements.fieldLayoutContent, `<p>${f.summary ?? '-'}</p>${createList((f.fields ?? []).map((x) => `${x.field}: ${x.group}`))}`);
   renderCountdown(data);
 }
 
 function currentFilters() {
-  const { field, group, team, club } = elements.filters;
+  const query = elements.filters.searchTerm?.value.trim().toLowerCase() ?? '';
   return {
-    field: field?.value.trim().toLowerCase() ?? '',
-    group: group?.value.trim().toLowerCase() ?? '',
-    team: team?.value.trim().toLowerCase() ?? '',
-    club: club?.value.trim().toLowerCase() ?? ''
+    field: state.activeField.toLowerCase(),
+    query
   };
 }
 
 function matchesFilter(match, q) {
-  return (!q.field || match.field.toLowerCase() === q.field)
-    && (!q.group || match.group.toLowerCase() === q.group)
-    && (!q.team || match.home.team.toLowerCase().includes(q.team) || match.away.team.toLowerCase().includes(q.team))
-    && (!q.club || match.home.club.toLowerCase().includes(q.club) || match.away.club.toLowerCase().includes(q.club));
+  return (!q.field || match.field.toLowerCase() === q.field || match.group.toLowerCase() === q.field)
+    && (!q.query || [match.home.team, match.away.team, match.home.club, match.away.club].some((v) => v.toLowerCase().includes(q.query)));
 }
 
 function parseMatchDate(time) {
@@ -113,10 +106,10 @@ function renderMatches() {
     const id = `match-${i}`;
     if (isRunning && !firstActiveId) firstActiveId = id;
 
-    const showFieldAndGroup = m.field?.trim().toLowerCase() !== m.group?.trim().toLowerCase();
-    const placeInfo = showFieldAndGroup ? `${m.field} · ${m.group}` : m.field;
+    const fieldName = m.field || m.group;
+    const fieldClass = `field-${fieldName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
-    return `<article id="${id}" class="match-card${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${m.time}</strong><span>${placeInfo}</span></div><p>${m.home.team} (${m.home.club})</p><p>vs.</p><p>${m.away.team} (${m.away.club})</p></article>`;
+    return `<article id="${id}" class="match-card ${fieldClass}${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${m.time}</strong><span class="pill field-pill">${fieldName}</span></div><p class="match-line">${m.home.team} : ${m.away.team}</p></article>`;
   }).join('');
 
   if (firstActiveId) document.getElementById(firstActiveId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -142,19 +135,33 @@ function applyPageMeta(eventData = {}) {
 function populateScheduleFilters() {
   if (!hasScheduleUi || !state.data) return;
   const matches = state.data.matches ?? [];
-  const uniq = (arr) => [...new Set(arr)].sort((a, b) => a.localeCompare(b, 'de'));
-  const fillSelect = (el, vals, label) => {
-    if (!el) return;
-    const cur = el.value;
-    el.innerHTML = `<option value="">${label}</option>` + vals.map((v) => `<option value="${v}">${v}</option>`).join('');
-    el.value = cur;
-  };
-  fillSelect(elements.filters.field, uniq(matches.map((m) => m.field)), 'Alle Spielfelder');
-  fillSelect(elements.filters.group, uniq(matches.map((m) => m.group)), 'Alle Gruppen');
-  if (elements.teamSuggestions) elements.teamSuggestions.innerHTML = uniq(matches.flatMap((m) => [m.home.team, m.away.team])).map((v) => `<option value="${v}"></option>`).join('');
-  if (elements.clubSuggestions) elements.clubSuggestions.innerHTML = uniq(matches.flatMap((m) => [m.home.club, m.away.club])).map((v) => `<option value="${v}"></option>`).join('');
+  const uniq = (arr) => [...new Set(arr.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
+  const fields = uniq(matches.map((m) => m.field || m.group));
+  state.searchPool = uniq(matches.flatMap((m) => [m.home.team, m.away.team, m.home.club, m.away.club]));
+
+  if (elements.filters.fieldPills) {
+    const pills = ['Alle', ...fields].map((name) => {
+      const value = name === 'Alle' ? '' : name;
+      const active = value === state.activeField;
+      return `<button type="button" class="pill${active ? ' is-active' : ''}" data-field="${value}">${name}</button>`;
+    }).join('');
+    elements.filters.fieldPills.innerHTML = pills;
+  }
 }
 
+function updateSearchSuggestions() {
+  if (!elements.searchSuggestions) return;
+  const q = (elements.filters.searchTerm?.value ?? '').trim().toLowerCase();
+  if (!q) {
+    elements.searchSuggestions.innerHTML = '';
+    return;
+  }
+
+  window.setTimeout(() => {
+    const hits = state.searchPool.filter((value) => value.toLowerCase().includes(q)).slice(0, 8);
+    elements.searchSuggestions.innerHTML = hits.map((hit) => `<button type="button" class="autocomplete-item" role="option">${hit}</button>`).join('');
+  }, 120);
+}
 async function loadJson(path, err) {
   const r = await fetch(path);
   if (!r.ok) throw new Error(err);
@@ -176,7 +183,21 @@ async function loadAllData() {
 
 function wireScheduleFilters() {
   if (!hasScheduleUi) return;
-  Object.values(elements.filters).forEach((n) => n?.addEventListener('input', renderMatches));
+  elements.filters.searchTerm?.addEventListener('input', () => { updateSearchSuggestions(); renderMatches(); });
+  elements.filters.fieldPills?.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-field]');
+    if (!button) return;
+    state.activeField = button.getAttribute('data-field') ?? '';
+    populateScheduleFilters();
+    renderMatches();
+  });
+  elements.searchSuggestions?.addEventListener('click', (event) => {
+    const button = event.target.closest('.autocomplete-item');
+    if (!button || !elements.filters.searchTerm) return;
+    elements.filters.searchTerm.value = button.textContent ?? '';
+    elements.searchSuggestions.innerHTML = '';
+    renderMatches();
+  });
 }
 
 function markActiveNav() {
