@@ -1,5 +1,7 @@
 const elements = {
   quickInfoContent: document.querySelector('#quickInfoContent'),
+  orgaInfoContent: document.querySelector('#orgaInfoContent'),
+  kickoffCountdown: document.querySelector('#kickoffCountdown'),
   cateringContent: document.querySelector('#cateringContent'),
   directionsContent: document.querySelector('#directionsContent'),
   fieldLayoutContent: document.querySelector('#fieldLayoutContent'),
@@ -15,7 +17,7 @@ const elements = {
   }
 };
 
-const state = { data: null, sampleData: null };
+const state = { data: null, sampleData: null, countdownTimer: null };
 
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
 
@@ -27,8 +29,58 @@ function setHtml(node, html) {
   if (node) node.innerHTML = html;
 }
 
+function kickoffDate(eventData = {}) {
+  if (!eventData.date || !eventData.startTime) return null;
+  return new Date(`${eventData.date}T${eventData.startTime}:00`);
+}
+
+function formatCountdown(targetDate) {
+  const diff = targetDate.getTime() - Date.now();
+  if (diff <= 0) return 'Das erste Spiel hat bereits begonnen.';
+
+  const totalSeconds = Math.floor(diff / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${days} Tage, ${hours} Stunden, ${minutes} Minuten, ${seconds} Sekunden`;
+}
+
+function renderCountdown(data) {
+  if (!elements.kickoffCountdown) return;
+
+  const startDate = kickoffDate(data.event ?? {});
+  if (!startDate || Number.isNaN(startDate.getTime())) {
+    elements.kickoffCountdown.textContent = 'Kein gültiger Anpfiff in den Daten vorhanden.';
+    return;
+  }
+
+  const updateCountdown = () => {
+    elements.kickoffCountdown.textContent = formatCountdown(startDate);
+  };
+
+  if (state.countdownTimer) {
+    clearInterval(state.countdownTimer);
+  }
+
+  updateCountdown();
+  state.countdownTimer = window.setInterval(updateCountdown, 1000);
+}
+
 function renderInfo(data) {
   setHtml(elements.quickInfoContent, createList(data.quickInfo));
+
+  const trainerMeeting = data.trainerMeeting ?? {};
+  const awardCeremony = data.awardCeremony ?? {};
+  const awardCeremonyText = awardCeremony.isPlanned
+    ? `Ja${awardCeremony.time ? `, geplant um ${awardCeremony.time} Uhr` : ''}${awardCeremony.location ? ` (${awardCeremony.location})` : ''}.`
+    : 'Nein.';
+
+  setHtml(
+    elements.orgaInfoContent,
+    `<p><strong>Trainerbesprechung:</strong> ${trainerMeeting.time ?? '-'} Uhr, ${trainerMeeting.location ?? '-'}</p><p><strong>Siegerehrung:</strong> ${awardCeremonyText}</p>`
+  );
 
   const catering = data.catering ?? {};
   setHtml(
@@ -47,6 +99,8 @@ function renderInfo(data) {
     elements.fieldLayoutContent,
     `<p>${fieldLayout.summary ?? '-'}</p>${createList((fieldLayout.fields ?? []).map((f) => `${f.field}: ${f.group}`))}`
   );
+
+  renderCountdown(data);
 }
 
 function currentFilters() {
@@ -136,4 +190,5 @@ async function init() {
 
 init().catch((error) => {
   if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message;
+  if (elements.kickoffCountdown) elements.kickoffCountdown.textContent = error.message;
 });

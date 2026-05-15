@@ -1,0 +1,10 @@
+{
+  "fieldLayout": {
+    "summary": "Drei Kleinfelder quer auf dem Hauptplatz.",
+    "fields": [
+      { "field": "Feld 1", "group": "Gruppe A" },
+      { "field": "Feld 2", "group": "Gruppe B" },
+      { "field": "Feld 3", "group": "Gruppe C" }
+    ]
+  }
+}
