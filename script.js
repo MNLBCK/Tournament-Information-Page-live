@@ -171,8 +171,9 @@ function validateData(data) {
 function applySiteConfig() {
   if (!state.siteTitle) return;
   const currentTitle = document.title.trim();
+  if (currentTitle === state.siteTitle) return;
   const expectedSuffix = `| ${state.siteTitle}`;
-  if (currentTitle && currentTitle !== state.siteTitle && !currentTitle.endsWith(expectedSuffix)) {
+  if (currentTitle && !currentTitle.endsWith(expectedSuffix)) {
     document.title = `${currentTitle} | ${state.siteTitle}`;
   } else if (!currentTitle) {
     document.title = state.siteTitle;
@@ -223,29 +224,37 @@ function mergeDataParts(parts) {
 }
 
 async function loadAllData() {
-  const [config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData] = await Promise.all([
-    loadJson(
+  const requests = {
+    config: loadJson(
       './data/config.json',
       'Konfiguration konnte nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
     ),
-    loadJson('./data/event.json', 'Event-Daten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'),
-    loadJson(
+    eventData: loadJson(
+      './data/event.json',
+      'Event-Daten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    ),
+    cateringData: loadJson(
       './data/catering.json',
       'Verpflegungsdaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
     ),
-    loadJson(
+    directionsData: loadJson(
       './data/anfahrt.json',
       'Anfahrtsdaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
     ),
-    loadJson(
+    fieldLayoutData: loadJson(
       './data/spielfeldlayout.json',
       'Spielfeldlayout konnte nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
     ),
-    loadJson(
+    scheduleData: loadJson(
       './data/spielplan.json',
       'Spielplandaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
     )
-  ]);
+  };
+
+  const loadedData = Object.fromEntries(
+    await Promise.all(Object.entries(requests).map(async ([key, promise]) => [key, await promise]))
+  );
+  const { config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData } = loadedData;
 
   const adminPasswordHash = config.adminPasswordHash;
   if (typeof adminPasswordHash !== 'string' || !/^[a-f0-9]{64}$/i.test(adminPasswordHash)) {
