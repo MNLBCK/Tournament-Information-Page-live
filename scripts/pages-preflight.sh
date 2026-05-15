@@ -40,6 +40,6 @@ for asset in "${required_assets[@]}"; do
 done
 
 echo "[4/4] Datenquellen im Script prüfen"
-rg -n "./data/config.json|./data/event.json|./data/catering.json|./data/anfahrt.json|./data/spielfeldlayout.json|./data/spielplan.json" script.js >/dev/null
+grep -En "./data/config.json|./data/event.json|./data/catering.json|./data/anfahrt.json|./data/spielfeldlayout.json|./data/spielplan.json" script.js >/dev/null
 
 echo "Pages-Preflight erfolgreich."
