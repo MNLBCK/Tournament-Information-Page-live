@@ -177,9 +177,7 @@ function applySiteConfig() {
   }
   const titleParts = currentTitle.split('|').map((part) => part.trim());
   if (titleParts.includes(state.siteTitle)) return;
-  if (currentTitle) {
-    document.title = `${currentTitle} | ${state.siteTitle}`;
-  }
+  document.title = `${currentTitle} | ${state.siteTitle}`;
 }
 
 function setData(data) {
@@ -361,6 +359,7 @@ init().catch((error) => {
   if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message;
   if (elements.kickoffCountdown) elements.kickoffCountdown.textContent = error.message;
   if (elements.adminError) setAdminError(error.message, false);
-  if (!elements.scheduleMeta && !elements.kickoffCountdown && !elements.adminError) alert(error.message);
+  const hasNoErrorDisplay = !elements.scheduleMeta && !elements.kickoffCountdown && !elements.adminError;
+  if (hasNoErrorDisplay) alert(error.message);
   console.error(error);
 });
