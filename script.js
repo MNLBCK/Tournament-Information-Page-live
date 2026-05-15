@@ -159,7 +159,7 @@ function renderMatches() {
 
   elements.scheduleList.innerHTML = filtered
     .map(
-      (m) => `<article class="match-card"><div class="match-header"><strong>${m.time}</strong><span>${m.field} · ${m.group}</span></div><p>${m.home.team} (${m.home.club})</p><p>vs.</p><p>${m.away.team} (${m.away.club})</p></article>`
+      (m) => `<article class="match-card"><div class="match-header"><strong>${m.time}</strong><span>${m.field} · ${m.group}</span></div><p>${m.home.team} vs. ${m.away.team} </p></article>`
     )
     .join('');
 }
