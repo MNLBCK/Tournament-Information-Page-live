@@ -88,7 +88,7 @@ function renderInfo(data) {
   const imageHtml = imageUrl
     ? `<figure class="field-layout-figure"><img class="field-layout-image" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(f.image?.alt ?? 'Spielfelder')}" loading="lazy" /></figure>`
     : '';
-  setHtml(elements.fieldLayoutContent, `<h2 class="field-layout-title">${escapeHtml(f.title ?? 'Spielfeldlayout')}</h2><p>${escapeHtml(f.summary ?? '-')}</p>${imageHtml}${fieldListHtml}`);
+  setHtml(elements.fieldLayoutContent, `<h2 class="field-layout-title">${escapeHtml(f.title ?? 'Spielfelder')}</h2><p>${escapeHtml(f.summary ?? '-')}</p>${imageHtml}${fieldListHtml}`);
   renderCountdown(data);
 }
 
