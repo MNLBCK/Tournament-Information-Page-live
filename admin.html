@@ -23,9 +23,11 @@
       <section class="card" id="adminGate">
         <h2>Login</h2>
         <form id="adminLoginForm" class="auth-grid">
+          <label for="adminPassword" class="sr-only">Admin-Passwort</label>
           <input id="adminPassword" type="password" placeholder="Admin-Passwort" autocomplete="current-password" required />
           <button type="submit" class="button">Entsperren</button>
         </form>
+        <p class="hint">Hinweis: Der Schutz läuft rein im Browser und dient der Zugangstrennung, nicht der Absicherung sensibler Daten.</p>
         <p id="adminError" class="error-text" hidden>Falsches Passwort.</p>
       </section>
 

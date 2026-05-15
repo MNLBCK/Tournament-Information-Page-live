@@ -62,6 +62,7 @@ Jedes Spiel in `matches` enthält u. a. `field`, `group`, `home`, `away`.
 
 - URL: `admin.html`
 - Passwort wird nur sitzungsbasiert im Browser (`sessionStorage`) als entsperrt markiert.
+- Hinweis: Da es eine statische Website ist, dient der Schutz der Trennung von Admin- und Besucheransicht, nicht der Absicherung sensibler Daten.
 
 ## Lokal testen
 

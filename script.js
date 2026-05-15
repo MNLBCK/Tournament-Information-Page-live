@@ -215,15 +215,9 @@ function wireAdminAuth() {
   });
 }
 
-function wireScheduleEvents() {
-  if (!hasScheduleUi && !hasAdminDataControls) return;
-
+function wireAdminDataControls() {
+  if (!hasAdminDataControls) return;
   elements.loadSample?.addEventListener('click', () => setData(state.sampleData));
-
-  if (hasScheduleUi) {
-    Object.values(elements.filters).forEach((node) => node?.addEventListener('input', renderMatches));
-  }
-
   elements.fileInput?.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -237,11 +231,17 @@ function wireScheduleEvents() {
   });
 }
 
+function wireScheduleFilters() {
+  if (!hasScheduleUi) return;
+  Object.values(elements.filters).forEach((node) => node?.addEventListener('input', renderMatches));
+}
+
 async function init() {
   state.sampleData = await loadSampleData();
   setData(state.sampleData);
   wireAdminAuth();
-  wireScheduleEvents();
+  wireAdminDataControls();
+  wireScheduleFilters();
 }
 
 init().catch((error) => {
