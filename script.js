@@ -7,151 +7,86 @@ const elements = {
   fieldLayoutContent: document.querySelector('#fieldLayoutContent'),
   scheduleList: document.querySelector('#scheduleList'),
   scheduleMeta: document.querySelector('#scheduleMeta'),
-  jsonExample: document.querySelector('#jsonExample'),
-  fileInput: document.querySelector('#scheduleFile'),
-  loadSample: document.querySelector('#loadSample'),
-  adminGate: document.querySelector('#adminGate'),
-  adminPanel: document.querySelector('#adminPanel'),
-  adminLoginForm: document.querySelector('#adminLoginForm'),
-  adminPassword: document.querySelector('#adminPassword'),
-  adminError: document.querySelector('#adminError'),
-  adminLogout: document.querySelector('#adminLogout'),
-  jsonFormatSection: document.querySelector('#json-format'),
   filters: {
     field: document.querySelector('#searchField'),
+    group: document.querySelector('#searchGroup'),
     team: document.querySelector('#searchTeam'),
     club: document.querySelector('#searchClub')
-  }
+  },
+  teamSuggestions: document.querySelector('#teamSuggestions'),
+  clubSuggestions: document.querySelector('#clubSuggestions')
 };
 
-const state = { data: null, runtimeData: null, sampleData: null, countdownTimer: null, adminPasswordHash: '', siteTitle: '' };
-
+const state = { data: null, countdownTimer: null, siteTitle: '' };
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
-const hasAdminDataControls = Boolean(elements.fileInput || elements.loadSample);
-const ADMIN_SESSION_KEY = 'tip-admin-auth';
 
-async function hashPassword(input) {
-  const bytes = new TextEncoder().encode(input);
-  const digest = await crypto.subtle.digest('SHA-256', bytes);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-function createList(items = []) {
-  return `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
-}
-
-function setHtml(node, html) {
-  if (node) node.innerHTML = html;
-}
-
-function setAdminError(message, hidden = false) {
-  if (!elements.adminError) return;
-  elements.adminError.textContent = message;
-  elements.adminError.hidden = hidden;
-}
+const createList = (items = []) => `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
+const setHtml = (node, html) => { if (node) node.innerHTML = html; };
 
 function kickoffDate(eventData = {}) {
   if (!eventData.date || !eventData.startTime) return null;
   return new Date(`${eventData.date}T${eventData.startTime}:00`);
 }
-
 function formatCountdown(targetDate) {
   const diff = targetDate.getTime() - Date.now();
   if (diff <= 0) return 'Das erste Spiel hat bereits begonnen.';
-
   const totalSeconds = Math.floor(diff / 1000);
-  const days = Math.floor(totalSeconds / 86400);
-  const hours = Math.floor((totalSeconds % 86400) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  return `${days} Tage, ${hours} Stunden, ${minutes} Minuten, ${seconds} Sekunden`;
+  return `${Math.floor(totalSeconds / 86400)} Tage, ${Math.floor((totalSeconds % 86400) / 3600)} Stunden, ${Math.floor((totalSeconds % 3600) / 60)} Minuten, ${totalSeconds % 60} Sekunden`;
 }
-
 function renderCountdown(data) {
   if (!elements.kickoffCountdown) return;
-
   const startDate = kickoffDate(data.event ?? {});
-  if (!startDate || Number.isNaN(startDate.getTime())) {
-    elements.kickoffCountdown.textContent = 'Kein gültiger Anpfiff in den Daten vorhanden.';
-    return;
-  }
-
-  const updateCountdown = () => {
-    elements.kickoffCountdown.textContent = formatCountdown(startDate);
-  };
-
-  if (state.countdownTimer) {
-    clearInterval(state.countdownTimer);
-  }
-
-  updateCountdown();
-  state.countdownTimer = window.setInterval(updateCountdown, 1000);
+  if (!startDate || Number.isNaN(startDate.getTime())) return;
+  const update = () => { elements.kickoffCountdown.textContent = formatCountdown(startDate); };
+  if (state.countdownTimer) clearInterval(state.countdownTimer);
+  update(); state.countdownTimer = window.setInterval(update, 1000);
 }
 
 function renderInfo(data) {
   setHtml(elements.quickInfoContent, createList(data.quickInfo));
-
-  const trainerMeeting = data.trainerMeeting ?? {};
-  const awardCeremony = data.awardCeremony ?? {};
-  const awardCeremonyText = awardCeremony.isPlanned
-    ? `Ja${awardCeremony.time ? `, geplant um ${awardCeremony.time} Uhr` : ''}${awardCeremony.location ? ` (${awardCeremony.location})` : ''}.`
-    : 'Nein.';
-
-  setHtml(
-    elements.orgaInfoContent,
-    `<p><strong>Trainerbesprechung:</strong> ${trainerMeeting.time ?? '-'} Uhr, ${trainerMeeting.location ?? '-'}</p><p><strong>Siegerehrung:</strong> ${awardCeremonyText}</p>`
-  );
-
-  const catering = data.catering ?? {};
-  setHtml(
-    elements.cateringContent,
-    `${createList(catering.offerings)}<p><strong>Zahlung:</strong> ${catering.payment ?? '-'}</p><p><strong>Hinweis:</strong> ${catering.notes ?? '-'}</p>`
-  );
-
-  const directions = data.directions ?? {};
-  setHtml(
-    elements.directionsContent,
-    `<p><strong>Adresse:</strong> ${directions.address ?? '-'}</p><p><strong>Parken:</strong> ${directions.parking ?? '-'}</p><p><strong>ÖPNV:</strong> ${directions.publicTransport ?? '-'}</p>`
-  );
-
-  const fieldLayout = data.fieldLayout ?? {};
-  setHtml(
-    elements.fieldLayoutContent,
-    `<p>${fieldLayout.summary ?? '-'}</p>${createList((fieldLayout.fields ?? []).map((f) => `${f.field}: ${f.group}`))}`
-  );
-
+  const tm = data.trainerMeeting ?? {}; const ac = data.awardCeremony ?? {};
+  setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${tm.time ?? '-'} Uhr, ${tm.location ?? '-'}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${ac.time ? `, geplant um ${ac.time} Uhr` : ''}${ac.location ? ` (${ac.location})` : ''}.` : 'Nein.'}</p>`);
+  const c = data.catering ?? {};
+  setHtml(elements.cateringContent, `${createList(c.offerings)}<p><strong>Zahlung:</strong> ${c.payment ?? '-'}</p><p><strong>Hinweis:</strong> ${c.notes ?? '-'}</p>`);
+  const d = data.directions ?? {};
+  setHtml(elements.directionsContent, `<p><strong>Adresse:</strong> ${d.address ?? '-'}</p><p><strong>Parken:</strong> ${d.parking ?? '-'}</p><p><strong>ÖPNV:</strong> ${d.publicTransport ?? '-'}</p>`);
+  const f = data.fieldLayout ?? {};
+  setHtml(elements.fieldLayoutContent, `<p>${f.summary ?? '-'}</p>${createList((f.fields ?? []).map((x) => `${x.field}: ${x.group}`))}`);
   renderCountdown(data);
 }
 
 function currentFilters() {
-  const { field, team, club } = elements.filters;
-  return {
-    field: field?.value.trim().toLowerCase() ?? '',
-    team: team?.value.trim().toLowerCase() ?? '',
-    club: club?.value.trim().toLowerCase() ?? ''
-  };
+  const { field, group, team, club } = elements.filters;
+  return { field: field?.value.trim().toLowerCase() ?? '', group: group?.value.trim().toLowerCase() ?? '', team: team?.value.trim().toLowerCase() ?? '', club: club?.value.trim().toLowerCase() ?? '' };
+}
+function matchesFilter(match, q) {
+  return (!q.field || match.field.toLowerCase() === q.field) && (!q.group || match.group.toLowerCase() === q.group) && (!q.team || match.home.team.toLowerCase().includes(q.team) || match.away.team.toLowerCase().includes(q.team)) && (!q.club || match.home.club.toLowerCase().includes(q.club) || match.away.club.toLowerCase().includes(q.club));
 }
 
-function matchesFilter(match, query) {
-  return (
-    (!query.field || match.field.toLowerCase().includes(query.field)) &&
-    (!query.team || match.home.team.toLowerCase().includes(query.team) || match.away.team.toLowerCase().includes(query.team)) &&
-    (!query.club || match.home.club.toLowerCase().includes(query.club) || match.away.club.toLowerCase().includes(query.club))
-  );
+function parseMatchDate(time) {
+  const [h,m]=time.split(':').map(Number);
+  const dt = kickoffDate(state.data?.event ?? {});
+  if (!dt || Number.isNaN(h) || Number.isNaN(m)) return null;
+  dt.setHours(h,m,0,0);
+  return dt;
 }
 
 function renderMatches() {
   if (!hasScheduleUi || !state.data) return;
-
-  const event = state.data.event ?? {};
-  const allMatches = state.data.matches ?? [];
+  const event = state.data.event ?? {}; const allMatches = state.data.matches ?? [];
   const filtered = allMatches.filter((match) => matchesFilter(match, currentFilters()));
-
   elements.scheduleMeta.textContent = `${event.name ?? 'Turnier'} · ${event.date ?? '-'} · ${event.startTime ?? '-'} · ${event.location ?? '-'} · ${filtered.length}/${allMatches.length} Spiele`;
+  if (!filtered.length) { elements.scheduleList.innerHTML = '<p>Keine Spiele mit diesen Filtern gefunden.</p>'; return; }
 
+  const now = new Date();
+  let firstActiveId = '';
+  elements.scheduleList.innerHTML = filtered.map((m, i) => {
+    const start = parseMatchDate(m.time); const end = start ? new Date(start.getTime() + 9*60000) : null;
+    const isRunning = start && end && now >= start && now < end;
+    const id = `match-${i}`;
+    if (isRunning && !firstActiveId) firstActiveId = id;
+    return `<article id="${id}" class="match-card${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${m.time}</strong><span>${m.field} · ${m.group}</span></div><p>${m.home.team} (${m.home.club})</p><p>vs.</p><p>${m.away.team} (${m.away.club})</p></article>`;
+  }).join('');
   if (!filtered.length) {
     elements.scheduleList.innerHTML = '<p>Keine Spiele mit diesen Filtern gefunden.</p>';
     return;
@@ -159,7 +94,7 @@ function renderMatches() {
 
   elements.scheduleList.innerHTML = filtered
     .map(
-      (m) => `<article class="match-card"><div class="match-header"><strong>${m.time}</strong><span>${m.field} · ${m.group}</span></div><p>${m.home.team} (${m.home.club})</p><p>vs.</p><p>${m.away.team} (${m.away.club})</p></article>`
+      (m) => `<article class="match-card"><div class="match-header"><strong>${m.time}</strong><span>${m.field} · ${m.group}</span></div><p>${m.home.team} vs. ${m.away.team} </p></article>`
     )
     .join('');
 }
@@ -195,175 +130,59 @@ function setData(data) {
   if (elements.jsonExample) elements.jsonExample.textContent = JSON.stringify(data, null, 2);
 }
 
-async function loadJson(path, errorMessage) {
-  let response;
-  try {
-    response = await fetch(path);
-  } catch {
-    throw new Error(errorMessage);
-  }
-  if (!response.ok) throw new Error(errorMessage);
-  try {
-    return await response.json();
-  } catch {
-    throw new Error(errorMessage);
-  }
+  if (firstActiveId) document.getElementById(firstActiveId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function mergeDataParts(parts) {
-  const merged = {};
-  const keyOwners = new Map();
-
-  parts.forEach(({ source, data }) => {
-    Object.entries(data).forEach(([key, value]) => {
-      if (keyOwners.has(key)) {
-        throw new Error(`Datenkonflikt: Schlüssel "${key}" ist doppelt vorhanden (${keyOwners.get(key)} und ${source}).`);
-      }
-      keyOwners.set(key, source);
-      merged[key] = value;
-    });
-  });
-
-  return merged;
-}
-
-async function loadAllData() {
-  const requests = {
-    config: loadJson(
-      './data/config.json',
-      'Konfiguration konnte nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
-    ),
-    eventData: loadJson(
-      './data/event.json',
-      'Event-Daten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
-    ),
-    cateringData: loadJson(
-      './data/catering.json',
-      'Verpflegungsdaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
-    ),
-    directionsData: loadJson(
-      './data/anfahrt.json',
-      'Anfahrtsdaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
-    ),
-    fieldLayoutData: loadJson(
-      './data/spielfeldlayout.json',
-      'Spielfeldlayout konnte nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
-    ),
-    scheduleData: loadJson(
-      './data/spielplan.json',
-      'Spielplandaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
-    )
+function populateScheduleFilters() {
+  if (!hasScheduleUi || !state.data) return;
+  const matches = state.data.matches ?? [];
+  const uniq = (arr) => [...new Set(arr)].sort((a,b)=>a.localeCompare(b,'de'));
+  const fillSelect = (el, vals, label) => {
+    if (!el) return;
+    const cur = el.value;
+    el.innerHTML = `<option value="">${label}</option>` + vals.map((v) => `<option value="${v}">${v}</option>`).join('');
+    el.value = cur;
   };
+  fillSelect(elements.filters.field, uniq(matches.map((m)=>m.field)), 'Alle Spielfelder');
+  fillSelect(elements.filters.group, uniq(matches.map((m)=>m.group)), 'Alle Gruppen');
+  if (elements.teamSuggestions) elements.teamSuggestions.innerHTML = uniq(matches.flatMap((m)=>[m.home.team,m.away.team])).map((v)=>`<option value="${v}"></option>`).join('');
+  if (elements.clubSuggestions) elements.clubSuggestions.innerHTML = uniq(matches.flatMap((m)=>[m.home.club,m.away.club])).map((v)=>`<option value="${v}"></option>`).join('');
+}
 
-  const loadedData = Object.fromEntries(
-    await Promise.all(Object.entries(requests).map(async ([key, promise]) => [key, await promise]))
-  );
-  const { config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData } = loadedData;
-
-  const adminPasswordHash = config.adminPasswordHash;
-  if (typeof adminPasswordHash !== 'string' || !/^[a-f0-9]{64}$/i.test(adminPasswordHash)) {
-    throw new Error('Konfiguration ungültig: data/config.json benötigt ein gültiges Feld "adminPasswordHash" (SHA-256 Hex).');
-  }
-
-  state.adminPasswordHash = adminPasswordHash;
-  state.siteTitle = config.siteTitle ?? '';
-  applySiteConfig();
-
-  return mergeDataParts([
-    { source: 'data/spielplan.json', data: scheduleData },
-    { source: 'data/event.json', data: eventData },
-    { source: 'data/catering.json', data: cateringData },
-    { source: 'data/anfahrt.json', data: directionsData },
-    { source: 'data/spielfeldlayout.json', data: fieldLayoutData }
+async function loadJson(path, err) { const r = await fetch(path); if (!r.ok) throw new Error(err); return r.json(); }
+async function loadAllData() {
+  const [config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData] = await Promise.all([
+    loadJson('./data/config.json', 'Konfiguration konnte nicht geladen werden.'),
+    loadJson('./data/event.json', 'Event-Daten konnten nicht geladen werden.'),
+    loadJson('./data/catering.json', 'Verpflegungsdaten konnten nicht geladen werden.'),
+    loadJson('./data/anfahrt.json', 'Anfahrtsdaten konnten nicht geladen werden.'),
+    loadJson('./data/spielfeldlayout.json', 'Spielfeldlayout konnte nicht geladen werden.'),
+    loadJson('./data/spielplan.json', 'Spielplandaten konnten nicht geladen werden.')
   ]);
+  state.siteTitle = config.siteTitle ?? '';
+  return { ...scheduleData, ...eventData, ...cateringData, ...directionsData, ...fieldLayoutData };
 }
-
-async function loadSampleData() {
-  return loadJson('./sample-data.json', 'Beispieldaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).');
-}
-
-function setAdminVisibility(isUnlocked) {
-  if (!elements.adminPanel || !elements.adminGate) return;
-  elements.adminPanel.hidden = !isUnlocked;
-  elements.adminGate.hidden = isUnlocked;
-  if (elements.jsonFormatSection) elements.jsonFormatSection.hidden = !isUnlocked;
-  if (!isUnlocked && elements.adminPassword) elements.adminPassword.value = '';
-  setAdminError('Falsches Passwort.', true);
-}
-
-function wireAdminAuth() {
-  if (!elements.adminLoginForm) return;
-
-  const isUnlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
-  setAdminVisibility(isUnlocked);
-
-  elements.adminLoginForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    if (!state.adminPasswordHash) {
-      setAdminError('Admin-Zugang ist nicht konfiguriert. Bitte data/config.json prüfen.', false);
-      return;
-    }
-    const enteredPassword = elements.adminPassword?.value ?? '';
-    const granted = (await hashPassword(enteredPassword)) === state.adminPasswordHash;
-
-    if (!granted) {
-      setAdminError('Falsches Passwort.', false);
-      return;
-    }
-
-    sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
-    setAdminVisibility(true);
-  });
-
-  elements.adminLogout?.addEventListener('click', () => {
-    sessionStorage.removeItem(ADMIN_SESSION_KEY);
-    setAdminVisibility(false);
-  });
-}
-
-function wireAdminDataControls() {
-  if (!hasAdminDataControls) return;
-  elements.loadSample?.addEventListener('click', async () => {
-    try {
-      if (!state.sampleData) {
-        state.sampleData = await loadSampleData();
-      }
-      setData(state.sampleData);
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-  elements.fileInput?.addEventListener('change', async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      setData(JSON.parse(await file.text()));
-    } catch {
-      alert('Datei konnte nicht gelesen werden. Bitte gültiges JSON wählen.');
-    } finally {
-      elements.fileInput.value = '';
-    }
-  });
-}
+function applySiteConfig() { if (state.siteTitle) document.title = `${document.title.split(' | ')[0]} | ${state.siteTitle}`; }
 
 function wireScheduleFilters() {
   if (!hasScheduleUi) return;
-  Object.values(elements.filters).forEach((node) => node?.addEventListener('input', renderMatches));
+  Object.values(elements.filters).forEach((n) => n?.addEventListener('input', renderMatches));
+}
+
+function markActiveNav() {
+  const key = (location.pathname.split('/').pop() || 'index.html').replace('.html','');
+  document.querySelectorAll('.top-nav [data-nav]').forEach((el) => {
+    if (el.getAttribute('data-nav') === key) el.classList.add('active');
+  });
 }
 
 async function init() {
-  state.runtimeData = await loadAllData();
-  setData(state.runtimeData);
-  wireAdminAuth();
-  wireAdminDataControls();
+  state.data = await loadAllData();
+  applySiteConfig();
+  renderInfo(state.data);
+  populateScheduleFilters();
+  renderMatches();
   wireScheduleFilters();
+  markActiveNav();
 }
-
-init().catch((error) => {
-  if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message;
-  if (elements.kickoffCountdown) elements.kickoffCountdown.textContent = error.message;
-  if (elements.adminError) setAdminError(error.message);
-  const hasNoErrorDisplay = !elements.scheduleMeta && !elements.kickoffCountdown && !elements.adminError;
-  if (hasNoErrorDisplay) alert(error.message);
-  console.error(error);
-});
+init().catch((error) => { if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message; console.error(error); });

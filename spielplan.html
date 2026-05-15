@@ -4,27 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spielplan | Spieltag-Info</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="theme-kids-football">
     <header class="card hero">
       <h1>Spielplan</h1>
-      <img class="host-logo" src="logo.svg" alt="Gastgeberlogo SG Hochberg/Hochdorf" />
+      <img class="host-logo" src="Host_Logo.png" alt="Gastgeberlogo SG Hochberg/Hochdorf" />
       <nav class="top-nav">
-        <a class="button secondary" href="index.html">Start</a>
-        <a class="button secondary" href="verpflegung.html">Verpflegung</a>
-        <a class="button secondary" href="anfahrt.html">Anfahrt</a>
-        <a class="button secondary" href="spielfeldlayout.html">Spielfeldlayout</a>
-        <a class="button secondary" href="admin.html">Admin</a>
-      </nav>
+  <a class="button secondary" href="index.html" data-nav="index">Start</a>
+  <a class="button secondary" href="verpflegung.html" data-nav="verpflegung">Verpflegung</a>
+  <a class="button secondary" href="anfahrt.html" data-nav="anfahrt">Anfahrt</a>
+  <a class="button secondary" href="spielfeldlayout.html" data-nav="spielfeldlayout">Spielfeldlayout</a>
+  <a class="button secondary" href="spielplan.html" data-nav="spielplan">Spielplan</a>
+</nav>
     </header>
     <main>
-      <section class="card" id="schedule">
+      <section class="card schedule-card" id="schedule">
         <p class="hint">Suche nach Spielfeld, Mannschaft oder Verein.</p>
         <div class="search-grid">
-          <input id="searchField" type="search" placeholder="Spielfeld" />
-          <input id="searchTeam" type="search" placeholder="Mannschaft" />
-          <input id="searchClub" type="search" placeholder="Verein" />
+          <select id="searchField"><option value="">Alle Spielfelder</option></select>
+          <select id="searchGroup"><option value="">Alle Gruppen</option></select>
+          <input id="searchTeam" type="search" list="teamSuggestions" placeholder="Mannschaft" />
+          <datalist id="teamSuggestions"></datalist>
+          <input id="searchClub" type="search" list="clubSuggestions" placeholder="Verein" />
+          <datalist id="clubSuggestions"></datalist>
         </div>
         <div id="scheduleMeta" class="meta"></div>
         <div id="scheduleList" class="match-list"></div>
