@@ -1,12 +1,31 @@
 {
   "catering": {
-    "offerings": [
-      "Kaffee",
-      "Wasser",
-      "Obstbecher",
-      "Brötchen",
-      "Würstchen"
+    "categories": [
+      {
+        "name": "Essen",
+        "icon": "🍽️",
+        "items": [
+          { "name": "Rote Wurst / Brötchen", "icon": "🌭", "price": "3,50 €" },
+          { "name": "Currywurst / Brötchen", "icon": "🌭", "price": "4,00 €" },
+          { "name": "Pommes", "icon": "🍟", "price": "3,00 €" }
+        ]
+      },
+      {
+        "name": "Getränke",
+        "icon": "🥤",
+        "items": [
+          { "name": "Cola 0,33l / Fanta 0,33l / Spezi 0,33l", "icon": "🥤", "price": "3,00 €" },
+          { "name": "Apfelschorle 0,5l", "icon": "🍎", "price": "3,50 €" },
+          { "name": "Mineralwasser 0,5l", "icon": "💧", "price": "3,00 €" },
+          { "name": "Weizenbier 0,5l", "icon": "🍺", "price": "4,00 €" },
+          { "name": "Halbe 0,5l", "icon": "🍺", "price": "4,00 €" },
+          { "name": "Radler 0,3l", "icon": "🍺", "price": "3,50 €" },
+          { "name": "Rotwein / Weißwein / Roséwein 0,25l", "icon": "🍷", "price": "4,50 €" },
+          { "name": "Weinschorle 0,25l", "icon": "🍷", "price": "4,00 €" },
+          { "name": "Tasse Kaffee", "icon": "☕", "price": "2,00 €" }
+        ]
+      }
     ],
-    "notes": "s. Aushang am Kiosk"
+    "notes": "Preise inkl. MwSt."
   }
 }

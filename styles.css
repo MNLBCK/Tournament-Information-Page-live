@@ -28,6 +28,13 @@ input[type='search'],select{border:1px solid var(--border);border-radius:.5rem;p
 .match-card.is-running{border:2px solid var(--accent);background:#fff7ed}
 .match-header{display:flex;justify-content:space-between;gap:.5rem}
 footer{text-align:center;padding:0 0 1.25rem}
+.catering-heading{margin:.8rem 0 .3rem;font-size:1rem}
+.catering-table{width:100%;border-collapse:collapse;margin-bottom:.6rem}
+.catering-table td{padding:.35rem .4rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.catering-table tr:last-child td{border-bottom:none}
+.catering-icon{width:2rem;text-align:center;font-size:1.1rem}
+.catering-price{text-align:right;font-weight:600;white-space:nowrap}
+.catering-notes{color:var(--muted);margin-top:.5rem}
 .host-logo{width:72px;height:auto;display:block}
 .hero-headline{display:flex;align-items:center;gap:.75rem}
 .hero-headline p{margin-bottom:0}

@@ -53,7 +53,16 @@ function renderInfo(data) {
   const ac = data.awardCeremony ?? {};
   setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${tm.time ?? '-'} Uhr, ${tm.location ?? '-'}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${ac.time ? `, geplant um ${ac.time} Uhr` : ''}${ac.location ? ` (${ac.location})` : ''}.` : 'Nein.'}</p>`);
   const c = data.catering ?? {};
-  setHtml(elements.cateringContent, `${createList(c.offerings)}<p><strong>Hinweis:</strong> ${c.notes ?? '-'}</p>`);
+  if (Array.isArray(c.categories) && c.categories.length) {
+    const tablesHtml = c.categories.map((cat) => {
+      const rows = (cat.items ?? []).map((item) => `<tr><td class="catering-icon">${item.icon ?? ''}</td><td>${item.name}</td><td class="catering-price">${item.price}</td></tr>`).join('');
+      return `<h3 class="catering-heading">${cat.icon ? `${cat.icon} ` : ''}${cat.name}</h3><table class="catering-table"><tbody>${rows}</tbody></table>`;
+    }).join('');
+    const notesHtml = c.notes ? `<p class="catering-notes"><strong>Hinweis:</strong> ${c.notes}</p>` : '';
+    setHtml(elements.cateringContent, tablesHtml + notesHtml);
+  } else {
+    setHtml(elements.cateringContent, `${createList(c.offerings ?? [])}<p><strong>Hinweis:</strong> ${c.notes ?? '-'}</p>`);
+  }
   const d = data.directions ?? {};
   const addressHtml = (d.address ?? '-').replace(/\n/g, '<br />');
   const websiteHtml = d.website ? `<p><strong>Website:</strong> <a href="${d.website}" target="_blank" rel="noopener noreferrer">${d.website}</a></p>` : '';
