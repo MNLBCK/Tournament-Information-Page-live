@@ -10,6 +10,13 @@ const elements = {
   jsonExample: document.querySelector('#jsonExample'),
   fileInput: document.querySelector('#scheduleFile'),
   loadSample: document.querySelector('#loadSample'),
+  adminGate: document.querySelector('#adminGate'),
+  adminPanel: document.querySelector('#adminPanel'),
+  adminLoginForm: document.querySelector('#adminLoginForm'),
+  adminPassword: document.querySelector('#adminPassword'),
+  adminError: document.querySelector('#adminError'),
+  adminLogout: document.querySelector('#adminLogout'),
+  jsonFormatSection: document.querySelector('#json-format'),
   filters: {
     field: document.querySelector('#searchField'),
     team: document.querySelector('#searchTeam'),
@@ -20,6 +27,17 @@ const elements = {
 const state = { data: null, sampleData: null, countdownTimer: null };
 
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
+const hasAdminDataControls = Boolean(elements.fileInput || elements.loadSample);
+const ADMIN_SESSION_KEY = 'tip-admin-auth';
+const ADMIN_PASSWORD_HASH = 'dff95fe75f6c8f8fdadf7453f8f9f8de09d8410b30f7ab53f6cb6e68a0f64276';
+
+async function hashPassword(input) {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 function createList(items = []) {
   return `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
@@ -153,6 +171,7 @@ function setData(data) {
   state.data = data;
   renderInfo(data);
   renderMatches();
+  if (elements.jsonExample) elements.jsonExample.textContent = JSON.stringify(data, null, 2);
 }
 
 async function loadSampleData() {
@@ -161,13 +180,44 @@ async function loadSampleData() {
   return response.json();
 }
 
-function wireScheduleEvents() {
-  if (!hasScheduleUi) return;
+function setAdminVisibility(isUnlocked) {
+  if (!elements.adminPanel || !elements.adminGate) return;
+  elements.adminPanel.hidden = !isUnlocked;
+  elements.adminGate.hidden = isUnlocked;
+  if (elements.jsonFormatSection) elements.jsonFormatSection.hidden = !isUnlocked;
+  if (!isUnlocked && elements.adminPassword) elements.adminPassword.value = '';
+  if (elements.adminError) elements.adminError.hidden = true;
+}
 
+function wireAdminAuth() {
+  if (!elements.adminLoginForm) return;
+
+  const isUnlocked = sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+  setAdminVisibility(isUnlocked);
+
+  elements.adminLoginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const enteredPassword = elements.adminPassword?.value ?? '';
+    const granted = (await hashPassword(enteredPassword)) === ADMIN_PASSWORD_HASH;
+
+    if (!granted) {
+      if (elements.adminError) elements.adminError.hidden = false;
+      return;
+    }
+
+    sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+    setAdminVisibility(true);
+  });
+
+  elements.adminLogout?.addEventListener('click', () => {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    setAdminVisibility(false);
+  });
+}
+
+function wireAdminDataControls() {
+  if (!hasAdminDataControls) return;
   elements.loadSample?.addEventListener('click', () => setData(state.sampleData));
-
-  Object.values(elements.filters).forEach((node) => node?.addEventListener('input', renderMatches));
-
   elements.fileInput?.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -181,11 +231,17 @@ function wireScheduleEvents() {
   });
 }
 
+function wireScheduleFilters() {
+  if (!hasScheduleUi) return;
+  Object.values(elements.filters).forEach((node) => node?.addEventListener('input', renderMatches));
+}
+
 async function init() {
   state.sampleData = await loadSampleData();
   setData(state.sampleData);
-  if (elements.jsonExample) elements.jsonExample.textContent = JSON.stringify(state.sampleData, null, 2);
-  wireScheduleEvents();
+  wireAdminAuth();
+  wireAdminDataControls();
+  wireScheduleFilters();
 }
 
 init().catch((error) => {

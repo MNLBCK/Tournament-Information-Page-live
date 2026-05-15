@@ -10,7 +10,8 @@ Die Website besteht aktuell aus einer Startseite und separaten Unterseiten:
 - `verpflegung.html` – Verpflegungsinformationen
 - `anfahrt.html` – Anfahrt, Parken, ÖPNV
 - `spielfeldlayout.html` – Layout und Gruppen je Spielfeld
-- `spielplan.html` – kompakter Spielplan mit Suche und JSON-Import
+- `spielplan.html` – kompakter Spielplan mit Suche
+- `admin.html` – passwortgeschützter Bereich für administrative Aufgaben (JSON-Import und JSON-Vorschau)
 
 Auf der Startseite werden zusätzlich angezeigt:
 
@@ -33,8 +34,9 @@ Mehrere Mannschaften pro Verein sind unterstützt (z. B. „SV Grün 1“, „SV
 - `anfahrt.html` – Unterseite Anfahrt
 - `spielfeldlayout.html` – Unterseite Spielfeldlayout
 - `spielplan.html` – Unterseite Spielplan
-- `styles.css` – responsives, kompaktes Layout
-- `script.js` – Laden, Validieren, Rendern, Countdown und Filtern der Daten
+- `admin.html` – passwortgeschützter Adminbereich
+- `styles.css` – responsives, kompaktes Layout inkl. Kinder-Fußball-Theme
+- `script.js` – Laden, Validieren, Rendern, Countdown, Filtern und Admin-Sperre
 - `sample-data.json` – Hauptdatensatz für die Seite
 - `AGENT-README.md` – Formatvorgaben für Agenten
 - `data/spielplan.json` – separates JSON für Spielplan
@@ -55,6 +57,12 @@ Die Datenstruktur enthält:
 - `matches` (Spiele)
 
 Jedes Spiel in `matches` enthält u. a. `field`, `group`, `home`, `away`.
+
+## Passwortschutz Adminbereich
+
+- URL: `admin.html`
+- Passwort wird nur sitzungsbasiert im Browser (`sessionStorage`) als entsperrt markiert.
+- Hinweis: Da es eine statische Website ist, dient der Schutz der Trennung von Admin- und Besucheransicht, nicht der Absicherung sensibler Daten.
 
 ## Lokal testen
 
