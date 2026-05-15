@@ -1,16 +1,18 @@
 {
   "quickInfo": [
-    "Anreise ab 08:15 Uhr möglich.",
-    "Mannschaftsbesprechung je Team 20 Minuten vor erstem Spiel.",
-    "Siegerehrung geplant um 14:45 Uhr."
+    "Jahrgänge 2019 und jünger.",
+    "Spielzeit 1 Minute, Pause 1 Minute.",
+    "Anpfiff nur im 1. Spiel, danach Abpfiff immer.",
+    "Eckball ohne, Anstoß Heim.",
+    "Bitte je Team 20 Minuten vor dem ersten Spiel vor Ort sein."
   ],
   "trainerMeeting": {
-    "time": "08:30",
-    "location": "Vereinsheim, Besprechungsraum"
+    "time": "09:40",
+    "location": "SKV Hochberg, Waldallee 70, 71686 Remseck"
   },
   "awardCeremony": {
-    "isPlanned": true,
-    "time": "14:45",
-    "location": "Hauptplatz, Bühne"
+    "isPlanned": false,
+    "time": "",
+    "location": ""
   }
 }
