@@ -47,6 +47,9 @@ Mehrere Mannschaften pro Verein sind unterstützt (z. B. „SV Grün 1“, „SV
 - `data/spielfeldlayout.json` – separates JSON für Spielfeldlayout
 - `data/anfahrt.json` – separates JSON für Anfahrt
 
+- `.github/workflows/pages-preflight.yml` – CI-Workflow für GitHub-Pages-Preflight-Checks
+- `scripts/pages-preflight.sh` – lokale und CI-fähige Prüfung für JSON, Links und Kern-Assets
+
 ## JSON-Format (Kurzüberblick)
 
 Die Datenstruktur enthält:
@@ -68,6 +71,24 @@ Jedes Spiel in `matches` enthält u. a. `field`, `group`, `home`, `away`.
 - Passwort-Hash ist seitenspezifisch in `data/config.json` abgelegt (`adminPasswordHash`).
 - Passwort wird nur sitzungsbasiert im Browser (`sessionStorage`) als entsperrt markiert.
 - Hinweis: Da es eine statische Website ist, dient der Schutz der Trennung von Admin- und Besucheransicht, nicht der Absicherung sensibler Daten.
+
+
+## Pages-Preflight (IST-Stand)
+
+Für die Wartung ist ein Preflight-Check vorhanden, der lokal und in GitHub Actions ausgeführt werden kann.
+
+Geprüft wird:
+
+- JSON-Validität aller aktiven Datenquellen unter `data/*.json`
+- interne `href`-Verlinkungen zwischen den HTML-Seiten
+- Vorhandensein zentraler Assets (`styles.css`, `script.js`, `logo.svg`, `favicon.svg`)
+- Referenzierung aller benötigten Datenquellen im `script.js`
+
+Lokal starten:
+
+```bash
+./scripts/pages-preflight.sh
+```
 
 ## Lokal testen
 

@@ -75,3 +75,10 @@ pre {
 }
 
 footer { text-align: center; padding: 0 0 1.25rem; }
+
+.host-logo {
+  width: 120px;
+  height: auto;
+  display: block;
+  margin: 0.5rem auto 1rem;
+}
