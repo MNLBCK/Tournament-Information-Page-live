@@ -29,18 +29,38 @@ function kickoffDate(eventData = {}) {
   return new Date(`${eventData.date}T${eventData.startTime}:00`);
 }
 
-function formatCountdown(targetDate) {
-  const diff = targetDate.getTime() - Date.now();
-  if (diff <= 0) return 'Das erste Spiel hat bereits begonnen.';
-  const totalSeconds = Math.floor(diff / 1000);
-  return `${Math.floor(totalSeconds / 86400)} Tage, ${Math.floor((totalSeconds % 86400) / 3600)} Stunden, ${Math.floor((totalSeconds % 3600) / 60)} Minuten, ${totalSeconds % 60} Sekunden`;
-}
-
 function renderCountdown(data) {
   if (!elements.kickoffCountdown) return;
   const startDate = kickoffDate(data.event ?? {});
   if (!startDate || Number.isNaN(startDate.getTime())) return;
-  const update = () => { elements.kickoffCountdown.textContent = formatCountdown(startDate); };
+
+  const grid = document.getElementById('cdGrid');
+  const message = document.getElementById('cdMessage');
+  const daysEl = document.getElementById('cdDays');
+  const hoursEl = document.getElementById('cdHours');
+  const minutesEl = document.getElementById('cdMinutes');
+  const secondsEl = document.getElementById('cdSeconds');
+  const SECONDS_PER_DAY = 86400;
+  const SECONDS_PER_HOUR = 3600;
+  const SECONDS_PER_MINUTE = 60;
+  const zeroPad = (n) => String(n).padStart(2, '0');
+
+  const update = () => {
+    const diff = startDate.getTime() - Date.now();
+    if (diff <= 0) {
+      if (grid) grid.hidden = true;
+      if (message) { message.className = 'cd-done'; message.textContent = '🎉 Das erste Spiel hat bereits begonnen!'; message.hidden = false; }
+      return;
+    }
+    const totalSeconds = Math.floor(diff / 1000);
+    if (grid) grid.hidden = false;
+    if (message) message.hidden = true;
+    if (daysEl) daysEl.textContent = Math.floor(totalSeconds / SECONDS_PER_DAY);
+    if (hoursEl) hoursEl.textContent = zeroPad(Math.floor((totalSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR));
+    if (minutesEl) minutesEl.textContent = zeroPad(Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE));
+    if (secondsEl) secondsEl.textContent = zeroPad(totalSeconds % SECONDS_PER_MINUTE);
+  };
+
   if (state.countdownTimer) clearInterval(state.countdownTimer);
   update();
   state.countdownTimer = window.setInterval(update, 1000);

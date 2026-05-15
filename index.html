@@ -27,8 +27,31 @@
 
     <main>
       <section class="card">
-        <h2>Countdown bis zum ersten Anpfiff</h2>
-        <p id="kickoffCountdown">Wird geladen …</p>
+        <h2>⚽ Countdown bis zum ersten Anpfiff</h2>
+        <div id="kickoffCountdown">
+          <div class="cd-grid" id="cdGrid" hidden>
+            <div class="cd-box">
+              <span class="cd-num" id="cdDays">0</span>
+              <span class="cd-lbl">Tage</span>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-box">
+              <span class="cd-num" id="cdHours">00</span>
+              <span class="cd-lbl">Stunden</span>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-box">
+              <span class="cd-num" id="cdMinutes">00</span>
+              <span class="cd-lbl">Minuten</span>
+            </div>
+            <div class="cd-sep">:</div>
+            <div class="cd-box">
+              <span class="cd-num" id="cdSeconds">00</span>
+              <span class="cd-lbl">Sekunden</span>
+            </div>
+          </div>
+          <p id="cdMessage">Wird geladen …</p>
+        </div>
       </section>
 
       <section class="card">
