@@ -37,8 +37,12 @@ Mehrere Mannschaften pro Verein sind unterstützt (z. B. „SV Grün 1“, „SV
 - `admin.html` – passwortgeschützter Adminbereich
 - `styles.css` – responsives, kompaktes Layout inkl. Kinder-Fußball-Theme
 - `script.js` – Laden, Validieren, Rendern, Countdown, Filtern und Admin-Sperre
-- `sample-data.json` – Hauptdatensatz für die Seite
+- `_config.yml` – Jekyll-Theme-Konfiguration für GitHub Pages
+- `sample-data.json` – Referenzvorlage (nicht aktive Laufzeitquelle)
 - `AGENT-README.md` – Formatvorgaben für Agenten
+- `data/config.json` – seitenspezifische Konfiguration inkl. Admin-Passwort-Hash
+- `data/event.json` – Event-Metadaten (Kurzinfos, Trainerbesprechung, Siegerehrung)
+- `data/catering.json` – Verpflegungsdaten
 - `data/spielplan.json` – separates JSON für Spielplan
 - `data/spielfeldlayout.json` – separates JSON für Spielfeldlayout
 - `data/anfahrt.json` – separates JSON für Anfahrt
@@ -61,6 +65,7 @@ Jedes Spiel in `matches` enthält u. a. `field`, `group`, `home`, `away`.
 ## Passwortschutz Adminbereich
 
 - URL: `admin.html`
+- Passwort-Hash ist seitenspezifisch in `data/config.json` abgelegt (`adminPasswordHash`).
 - Passwort wird nur sitzungsbasiert im Browser (`sessionStorage`) als entsperrt markiert.
 - Hinweis: Da es eine statische Website ist, dient der Schutz der Trennung von Admin- und Besucheransicht, nicht der Absicherung sensibler Daten.
 

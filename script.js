@@ -24,12 +24,11 @@ const elements = {
   }
 };
 
-const state = { data: null, sampleData: null, countdownTimer: null };
+const state = { data: null, sampleData: null, countdownTimer: null, adminPasswordHash: '', siteTitle: '' };
 
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
 const hasAdminDataControls = Boolean(elements.fileInput || elements.loadSample);
 const ADMIN_SESSION_KEY = 'tip-admin-auth';
-const ADMIN_PASSWORD_HASH = 'dff95fe75f6c8f8fdadf7453f8f9f8de09d8410b30f7ab53f6cb6e68a0f64276';
 
 async function hashPassword(input) {
   const bytes = new TextEncoder().encode(input);
@@ -163,6 +162,16 @@ function validateData(data) {
   return Boolean(data && data.event && Array.isArray(data.matches));
 }
 
+function applySiteConfig() {
+  if (!state.siteTitle) return;
+  const currentTitle = document.title.trim();
+  if (currentTitle && !currentTitle.includes(state.siteTitle)) {
+    document.title = `${currentTitle} | ${state.siteTitle}`;
+  } else if (!currentTitle) {
+    document.title = state.siteTitle;
+  }
+}
+
 function setData(data) {
   if (!validateData(data)) {
     alert('JSON ungültig: Erwartet wird mindestens "event" und "matches".');
@@ -174,10 +183,31 @@ function setData(data) {
   if (elements.jsonExample) elements.jsonExample.textContent = JSON.stringify(data, null, 2);
 }
 
-async function loadSampleData() {
-  const response = await fetch('./sample-data.json');
-  if (!response.ok) throw new Error('Beispieldaten konnten nicht geladen werden.');
+async function loadJson(path, errorMessage) {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(errorMessage);
   return response.json();
+}
+
+function mergeDataParts(parts) {
+  return parts.reduce((merged, current) => ({ ...merged, ...current }), {});
+}
+
+async function loadAllData() {
+  const [config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData] = await Promise.all([
+    loadJson('./data/config.json', 'Konfiguration konnte nicht geladen werden.'),
+    loadJson('./data/event.json', 'Event-Daten konnten nicht geladen werden.'),
+    loadJson('./data/catering.json', 'Verpflegungsdaten konnten nicht geladen werden.'),
+    loadJson('./data/anfahrt.json', 'Anfahrtsdaten konnten nicht geladen werden.'),
+    loadJson('./data/spielfeldlayout.json', 'Spielfeldlayout konnte nicht geladen werden.'),
+    loadJson('./data/spielplan.json', 'Spielplandaten konnten nicht geladen werden.')
+  ]);
+
+  state.adminPasswordHash = config.adminPasswordHash ?? '';
+  state.siteTitle = config.siteTitle ?? '';
+  applySiteConfig();
+
+  return mergeDataParts([scheduleData, eventData, cateringData, directionsData, fieldLayoutData]);
 }
 
 function setAdminVisibility(isUnlocked) {
@@ -198,7 +228,7 @@ function wireAdminAuth() {
   elements.adminLoginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const enteredPassword = elements.adminPassword?.value ?? '';
-    const granted = (await hashPassword(enteredPassword)) === ADMIN_PASSWORD_HASH;
+    const granted = Boolean(state.adminPasswordHash) && (await hashPassword(enteredPassword)) === state.adminPasswordHash;
 
     if (!granted) {
       if (elements.adminError) elements.adminError.hidden = false;
@@ -237,7 +267,7 @@ function wireScheduleFilters() {
 }
 
 async function init() {
-  state.sampleData = await loadSampleData();
+  state.sampleData = await loadAllData();
   setData(state.sampleData);
   wireAdminAuth();
   wireAdminDataControls();
