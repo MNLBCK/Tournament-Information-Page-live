@@ -19,10 +19,25 @@ const hasScheduleUi = Boolean(elements.scheduleList);
 
 const createList = (items = []) => `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
 const setHtml = (node, html) => { if (node) node.innerHTML = html; };
+const escapeHtml = (value = '') => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#39;');
 const formatDateDE = (isoDate = '') => {
   const [year, month, day] = isoDate.split('-');
   return year && month && day ? `${day}.${month}.${year}` : isoDate;
 };
+
+function safeImageUrl(value = '') {
+  try {
+    const url = new URL(value, window.location.href);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+}
 
 function kickoffDate(eventData = {}) {
   if (!eventData.date || !eventData.startTime) return null;
@@ -69,10 +84,11 @@ function renderInfo(data) {
   setHtml(elements.directionsContent, `<p><strong>Adresse:</strong><br />${addressHtml}</p>${websiteHtml}${noticeHtml}<p><strong>Parken:</strong> ${d.parking ?? '-'}</p>`);
   const f = data.fieldLayout ?? {};
   const fieldListHtml = createList((f.fields ?? []).map((x) => `${x.field}: ${x.group}`));
-  const imageHtml = f.image?.url
-    ? `<figure class="field-layout-figure"><img class="field-layout-image" src="${f.image.url}" alt="${f.image.alt ?? 'Spielfelder'}" loading="lazy" /></figure>`
+  const imageUrl = safeImageUrl(f.image?.url ?? '');
+  const imageHtml = imageUrl
+    ? `<figure class="field-layout-figure"><img class="field-layout-image" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(f.image?.alt ?? 'Spielfelder')}" loading="lazy" /></figure>`
     : fieldListHtml;
-  setHtml(elements.fieldLayoutContent, `<h2 class="field-layout-title">${f.title ?? 'Spielfeldlayout'}</h2><p>${f.summary ?? '-'}</p>${imageHtml}`);
+  setHtml(elements.fieldLayoutContent, `<h2 class="field-layout-title">${escapeHtml(f.title ?? 'Spielfeldlayout')}</h2><p>${escapeHtml(f.summary ?? '-')}</p>${imageHtml}`);
   renderCountdown(data);
 }
 
