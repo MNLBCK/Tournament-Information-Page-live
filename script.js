@@ -52,6 +52,8 @@ function renderCountdown(data) {
   const grid = document.getElementById('cdGrid');
   const message = document.getElementById('cdMessage');
   const daysEl = document.getElementById('cdDays');
+  const daysBox = daysEl ? daysEl.closest('.cd-box') : null;
+  const daysSep = daysBox ? daysBox.nextElementSibling : null;
   const hoursEl = document.getElementById('cdHours');
   const minutesEl = document.getElementById('cdMinutes');
   const secondsEl = document.getElementById('cdSeconds');
@@ -71,13 +73,11 @@ function renderCountdown(data) {
     if (grid) grid.hidden = false;
     if (message) message.hidden = true;
     const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
-    const hideDays = days === 0;
+    const hideDays = totalSeconds < SECONDS_PER_DAY;
+    if (daysBox) daysBox.hidden = hideDays;
+    if (daysSep && daysSep.classList.contains('cd-sep')) daysSep.hidden = hideDays;
     if (daysEl) {
       daysEl.textContent = days;
-      const daysBox = daysEl.closest('.cd-box');
-      const daysSep = daysBox ? daysBox.nextElementSibling : null;
-      if (daysBox) daysBox.hidden = hideDays;
-      if (daysSep && daysSep.classList.contains('cd-sep')) daysSep.hidden = hideDays;
     }
     if (hoursEl) hoursEl.textContent = zeroPad(Math.floor((totalSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR));
     if (minutesEl) minutesEl.textContent = zeroPad(Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE));
