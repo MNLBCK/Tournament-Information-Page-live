@@ -1,0 +1,16 @@
+{
+  "quickInfo": [
+    "Anreise ab 08:15 Uhr möglich.",
+    "Mannschaftsbesprechung je Team 20 Minuten vor erstem Spiel.",
+    "Siegerehrung geplant um 14:45 Uhr."
+  ],
+  "trainerMeeting": {
+    "time": "08:30",
+    "location": "Vereinsheim, Besprechungsraum"
+  },
+  "awardCeremony": {
+    "isPlanned": true,
+    "time": "14:45",
+    "location": "Hauptplatz, Bühne"
+  }
+}

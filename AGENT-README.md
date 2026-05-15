@@ -15,13 +15,32 @@ Agenten liefern strukturierte Daten für:
 
 Ablage unter `data/`:
 
-1. `data/spielplan.json`
-2. `data/spielfeldlayout.json`
-3. `data/anfahrt.json`
+1. `data/config.json`
+2. `data/spielplan.json`
+3. `data/event.json`
+4. `data/catering.json`
+5. `data/spielfeldlayout.json`
+6. `data/anfahrt.json`
 
 ## Formatvorgaben
 
-### 1) Spielplan: `data/spielplan.json`
+### 1) Konfiguration: `data/config.json`
+
+Pflichtfelder:
+
+- `adminPasswordHash` (SHA-256 als Hex-String, 64 Zeichen)
+
+Optional:
+
+- `siteTitle` (String für seitenspezifischen Titel)
+
+Hash-Erzeugung (Beispiel):
+
+```bash
+printf '%s' 'DEIN_PASSWORT' | sha256sum | awk '{print $1}'
+```
+
+### 2) Spielplan: `data/spielplan.json`
 
 Pflichtfelder:
 
@@ -39,7 +58,29 @@ Pro Eintrag in `matches`:
 - `home.club`, `home.team`
 - `away.club`, `away.team`
 
-### 2) Spielfeldlayout: `data/spielfeldlayout.json`
+### 3) Event-Metadaten: `data/event.json`
+
+Pflichtfelder:
+
+- `quickInfo` (Array aus Strings)
+- `trainerMeeting.time`
+- `trainerMeeting.location`
+- `awardCeremony.isPlanned` (Boolean)
+
+Optionale Felder:
+
+- `awardCeremony.time`
+- `awardCeremony.location`
+
+### 4) Verpflegung: `data/catering.json`
+
+Pflichtfelder:
+
+- `catering.offerings` (Array aus Strings)
+- `catering.payment`
+- `catering.notes`
+
+### 5) Spielfeldlayout: `data/spielfeldlayout.json`
 
 Pflichtfelder:
 
@@ -51,7 +92,7 @@ Pro Feld:
 - `field` (z. B. `Feld 1`)
 - `group` (z. B. `Gruppe A`)
 
-### 3) Anfahrt: `data/anfahrt.json`
+### 6) Anfahrt: `data/anfahrt.json`
 
 Pflichtfeld:
 
@@ -62,15 +103,9 @@ Optionale Felder:
 - `directions.parking`
 - `directions.publicTransport`
 
-## Erweiterte Informationen (im Hauptdatensatz)
+## Hinweis zum Hauptdatensatz
 
-Die Website liest aktuell `sample-data.json` als Hauptdatensatz. Dort sind folgende Orga-Felder vorgesehen:
-
-- `trainerMeeting.time` (z. B. `08:30`)
-- `trainerMeeting.location` (z. B. `Vereinsheim, Besprechungsraum`)
-- `awardCeremony.isPlanned` (Boolean)
-- `awardCeremony.time` (optional)
-- `awardCeremony.location` (optional)
+`sample-data.json` ist nur noch eine Referenzvorlage. Die aktive Website lädt die Daten aus den Dateien unter `data/`.
 
 ## Validierungsempfehlungen
 
@@ -78,4 +113,3 @@ Die Website liest aktuell `sample-data.json` als Hauptdatensatz. Dort sind folge
 - Datumsformat strikt `YYYY-MM-DD`
 - Uhrzeitformat strikt `HH:MM`
 - Mannschaftsnamen eindeutig pro Spiel
-

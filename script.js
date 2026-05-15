@@ -24,12 +24,11 @@ const elements = {
   }
 };
 
-const state = { data: null, sampleData: null, countdownTimer: null };
+const state = { data: null, runtimeData: null, sampleData: null, countdownTimer: null, adminPasswordHash: '', siteTitle: '' };
 
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
 const hasAdminDataControls = Boolean(elements.fileInput || elements.loadSample);
 const ADMIN_SESSION_KEY = 'tip-admin-auth';
-const ADMIN_PASSWORD_HASH = 'dff95fe75f6c8f8fdadf7453f8f9f8de09d8410b30f7ab53f6cb6e68a0f64276';
 
 async function hashPassword(input) {
   const bytes = new TextEncoder().encode(input);
@@ -45,6 +44,12 @@ function createList(items = []) {
 
 function setHtml(node, html) {
   if (node) node.innerHTML = html;
+}
+
+function setAdminError(message, hidden = false) {
+  if (!elements.adminError) return;
+  elements.adminError.textContent = message;
+  elements.adminError.hidden = hidden;
 }
 
 function kickoffDate(eventData = {}) {
@@ -163,6 +168,22 @@ function validateData(data) {
   return Boolean(data && data.event && Array.isArray(data.matches));
 }
 
+function applySiteConfig() {
+  if (!state.siteTitle) return;
+  const currentTitle = document.title.trim();
+  if (!currentTitle) {
+    document.title = state.siteTitle;
+    return;
+  }
+  const separator = ' | ';
+  const suffixStart = currentTitle.lastIndexOf(separator);
+  const hasSuffix = suffixStart !== -1;
+  const baseTitle = hasSuffix ? currentTitle.slice(0, suffixStart).trim() : currentTitle;
+  const currentSuffix = hasSuffix ? currentTitle.slice(suffixStart + separator.length).trim() : '';
+  if (currentSuffix === state.siteTitle) return;
+  document.title = baseTitle ? `${baseTitle}${separator}${state.siteTitle}` : state.siteTitle;
+}
+
 function setData(data) {
   if (!validateData(data)) {
     alert('JSON ungültig: Erwartet wird mindestens "event" und "matches".');
@@ -174,10 +195,91 @@ function setData(data) {
   if (elements.jsonExample) elements.jsonExample.textContent = JSON.stringify(data, null, 2);
 }
 
+async function loadJson(path, errorMessage) {
+  let response;
+  try {
+    response = await fetch(path);
+  } catch {
+    throw new Error(errorMessage);
+  }
+  if (!response.ok) throw new Error(errorMessage);
+  try {
+    return await response.json();
+  } catch {
+    throw new Error(errorMessage);
+  }
+}
+
+function mergeDataParts(parts) {
+  const merged = {};
+  const keyOwners = new Map();
+
+  parts.forEach(({ source, data }) => {
+    Object.entries(data).forEach(([key, value]) => {
+      if (keyOwners.has(key)) {
+        throw new Error(`Datenkonflikt: Schlüssel "${key}" ist doppelt vorhanden (${keyOwners.get(key)} und ${source}).`);
+      }
+      keyOwners.set(key, source);
+      merged[key] = value;
+    });
+  });
+
+  return merged;
+}
+
+async function loadAllData() {
+  const requests = {
+    config: loadJson(
+      './data/config.json',
+      'Konfiguration konnte nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    ),
+    eventData: loadJson(
+      './data/event.json',
+      'Event-Daten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    ),
+    cateringData: loadJson(
+      './data/catering.json',
+      'Verpflegungsdaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    ),
+    directionsData: loadJson(
+      './data/anfahrt.json',
+      'Anfahrtsdaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    ),
+    fieldLayoutData: loadJson(
+      './data/spielfeldlayout.json',
+      'Spielfeldlayout konnte nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    ),
+    scheduleData: loadJson(
+      './data/spielplan.json',
+      'Spielplandaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).'
+    )
+  };
+
+  const loadedData = Object.fromEntries(
+    await Promise.all(Object.entries(requests).map(async ([key, promise]) => [key, await promise]))
+  );
+  const { config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData } = loadedData;
+
+  const adminPasswordHash = config.adminPasswordHash;
+  if (typeof adminPasswordHash !== 'string' || !/^[a-f0-9]{64}$/i.test(adminPasswordHash)) {
+    throw new Error('Konfiguration ungültig: data/config.json benötigt ein gültiges Feld "adminPasswordHash" (SHA-256 Hex).');
+  }
+
+  state.adminPasswordHash = adminPasswordHash;
+  state.siteTitle = config.siteTitle ?? '';
+  applySiteConfig();
+
+  return mergeDataParts([
+    { source: 'data/spielplan.json', data: scheduleData },
+    { source: 'data/event.json', data: eventData },
+    { source: 'data/catering.json', data: cateringData },
+    { source: 'data/anfahrt.json', data: directionsData },
+    { source: 'data/spielfeldlayout.json', data: fieldLayoutData }
+  ]);
+}
+
 async function loadSampleData() {
-  const response = await fetch('./sample-data.json');
-  if (!response.ok) throw new Error('Beispieldaten konnten nicht geladen werden.');
-  return response.json();
+  return loadJson('./sample-data.json', 'Beispieldaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).');
 }
 
 function setAdminVisibility(isUnlocked) {
@@ -186,7 +288,7 @@ function setAdminVisibility(isUnlocked) {
   elements.adminGate.hidden = isUnlocked;
   if (elements.jsonFormatSection) elements.jsonFormatSection.hidden = !isUnlocked;
   if (!isUnlocked && elements.adminPassword) elements.adminPassword.value = '';
-  if (elements.adminError) elements.adminError.hidden = true;
+  setAdminError('Falsches Passwort.', true);
 }
 
 function wireAdminAuth() {
@@ -197,11 +299,15 @@ function wireAdminAuth() {
 
   elements.adminLoginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (!state.adminPasswordHash) {
+      setAdminError('Admin-Zugang ist nicht konfiguriert. Bitte data/config.json prüfen.', false);
+      return;
+    }
     const enteredPassword = elements.adminPassword?.value ?? '';
-    const granted = (await hashPassword(enteredPassword)) === ADMIN_PASSWORD_HASH;
+    const granted = (await hashPassword(enteredPassword)) === state.adminPasswordHash;
 
     if (!granted) {
-      if (elements.adminError) elements.adminError.hidden = false;
+      setAdminError('Falsches Passwort.', false);
       return;
     }
 
@@ -217,7 +323,16 @@ function wireAdminAuth() {
 
 function wireAdminDataControls() {
   if (!hasAdminDataControls) return;
-  elements.loadSample?.addEventListener('click', () => setData(state.sampleData));
+  elements.loadSample?.addEventListener('click', async () => {
+    try {
+      if (!state.sampleData) {
+        state.sampleData = await loadSampleData();
+      }
+      setData(state.sampleData);
+    } catch (error) {
+      alert(error.message);
+    }
+  });
   elements.fileInput?.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -237,8 +352,8 @@ function wireScheduleFilters() {
 }
 
 async function init() {
-  state.sampleData = await loadSampleData();
-  setData(state.sampleData);
+  state.runtimeData = await loadAllData();
+  setData(state.runtimeData);
   wireAdminAuth();
   wireAdminDataControls();
   wireScheduleFilters();
@@ -247,4 +362,8 @@ async function init() {
 init().catch((error) => {
   if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message;
   if (elements.kickoffCountdown) elements.kickoffCountdown.textContent = error.message;
+  if (elements.adminError) setAdminError(error.message);
+  const hasNoErrorDisplay = !elements.scheduleMeta && !elements.kickoffCountdown && !elements.adminError;
+  if (hasNoErrorDisplay) alert(error.message);
+  console.error(error);
 });
