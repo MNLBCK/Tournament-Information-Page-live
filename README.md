@@ -6,11 +6,17 @@ Statische, mobilefreundliche Website für Spieltags- und Turnierinformationen (G
 
 Die Website besteht aktuell aus einer Startseite und separaten Unterseiten:
 
-- `index.html` – Startseite mit Kurzinformationen und Navigation
+- `index.html` – Startseite mit Kurzinformationen, Countdown bis zum ersten Anpfiff und Navigation
 - `verpflegung.html` – Verpflegungsinformationen
 - `anfahrt.html` – Anfahrt, Parken, ÖPNV
 - `spielfeldlayout.html` – Layout und Gruppen je Spielfeld
 - `spielplan.html` – kompakter Spielplan mit Suche und JSON-Import
+
+Auf der Startseite werden zusätzlich angezeigt:
+
+- Countdown bis zum ersten Spiel (berechnet aus `event.date` + `event.startTime`)
+- Trainerbesprechung (Uhrzeit und Ort)
+- Siegerehrung (geplant: ja/nein, optional mit Zeit und Ort)
 
 Der Spielplan bietet folgende Filter:
 
@@ -28,8 +34,12 @@ Mehrere Mannschaften pro Verein sind unterstützt (z. B. „SV Grün 1“, „SV
 - `spielfeldlayout.html` – Unterseite Spielfeldlayout
 - `spielplan.html` – Unterseite Spielplan
 - `styles.css` – responsives, kompaktes Layout
-- `script.js` – Laden, Validieren, Rendern und Filtern der Daten
-- `sample-data.json` – Beispielformat für Turnierdaten
+- `script.js` – Laden, Validieren, Rendern, Countdown und Filtern der Daten
+- `sample-data.json` – Hauptdatensatz für die Seite
+- `AGENT-README.md` – Formatvorgaben für Agenten
+- `data/spielplan.json` – separates JSON für Spielplan
+- `data/spielfeldlayout.json` – separates JSON für Spielfeldlayout
+- `data/anfahrt.json` – separates JSON für Anfahrt
 
 ## JSON-Format (Kurzüberblick)
 
@@ -37,6 +47,8 @@ Die Datenstruktur enthält:
 
 - `event` (Name, Datum, Startzeit, Ort)
 - `quickInfo` (kurze Hinweise als Liste)
+- `trainerMeeting` (Zeit, Ort)
+- `awardCeremony` (ob geplant, optional Zeit/Ort)
 - `catering`
 - `directions`
 - `fieldLayout`

@@ -1,0 +1,17 @@
+{
+  "event": {
+    "name": "Frühjahrs-Spieltag U10",
+    "date": "2026-06-13",
+    "startTime": "09:00",
+    "location": "Sportplatz Musterstadt"
+  },
+  "matches": [
+    {
+      "time": "09:00",
+      "field": "Feld 1",
+      "group": "Gruppe A",
+      "home": { "club": "SV Grün", "team": "SV Grün 1" },
+      "away": { "club": "FC Blau", "team": "FC Blau 1" }
+    }
+  ]
+}
