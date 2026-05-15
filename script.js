@@ -24,7 +24,7 @@ const elements = {
   }
 };
 
-const state = { data: null, sampleData: null, countdownTimer: null, adminPasswordHash: '', siteTitle: '' };
+const state = { data: null, runtimeData: null, sampleData: null, countdownTimer: null, adminPasswordHash: '', siteTitle: '' };
 
 const hasScheduleUi = Boolean(elements.scheduleList && elements.scheduleMeta);
 const hasAdminDataControls = Boolean(elements.fileInput || elements.loadSample);
@@ -171,12 +171,14 @@ function validateData(data) {
 function applySiteConfig() {
   if (!state.siteTitle) return;
   const currentTitle = document.title.trim();
-  if (currentTitle === state.siteTitle) return;
-  const expectedSuffix = `| ${state.siteTitle}`;
-  if (currentTitle && !currentTitle.endsWith(expectedSuffix)) {
-    document.title = `${currentTitle} | ${state.siteTitle}`;
-  } else if (!currentTitle) {
+  if (!currentTitle) {
     document.title = state.siteTitle;
+    return;
+  }
+  const titleParts = currentTitle.split('|').map((part) => part.trim());
+  if (titleParts.includes(state.siteTitle)) return;
+  if (currentTitle) {
+    document.title = `${currentTitle} | ${state.siteTitle}`;
   }
 }
 
@@ -274,6 +276,10 @@ async function loadAllData() {
   ]);
 }
 
+async function loadSampleData() {
+  return loadJson('./sample-data.json', 'Beispieldaten konnten nicht geladen werden. Bitte Datei prüfen (vorhanden, gültiges JSON).');
+}
+
 function setAdminVisibility(isUnlocked) {
   if (!elements.adminPanel || !elements.adminGate) return;
   elements.adminPanel.hidden = !isUnlocked;
@@ -315,7 +321,16 @@ function wireAdminAuth() {
 
 function wireAdminDataControls() {
   if (!hasAdminDataControls) return;
-  elements.loadSample?.addEventListener('click', () => setData(state.sampleData));
+  elements.loadSample?.addEventListener('click', async () => {
+    try {
+      if (!state.sampleData) {
+        state.sampleData = await loadSampleData();
+      }
+      setData(state.sampleData);
+    } catch (error) {
+      alert(error.message);
+    }
+  });
   elements.fileInput?.addEventListener('change', async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -335,8 +350,8 @@ function wireScheduleFilters() {
 }
 
 async function init() {
-  state.sampleData = await loadAllData();
-  setData(state.sampleData);
+  state.runtimeData = await loadAllData();
+  setData(state.runtimeData);
   wireAdminAuth();
   wireAdminDataControls();
   wireScheduleFilters();
@@ -345,4 +360,7 @@ async function init() {
 init().catch((error) => {
   if (elements.scheduleMeta) elements.scheduleMeta.textContent = error.message;
   if (elements.kickoffCountdown) elements.kickoffCountdown.textContent = error.message;
+  if (elements.adminError) setAdminError(error.message, false);
+  if (!elements.scheduleMeta && !elements.kickoffCountdown && !elements.adminError) alert(error.message);
+  console.error(error);
 });

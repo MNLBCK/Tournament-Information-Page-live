@@ -71,7 +71,7 @@ Jedes Spiel in `matches` enthält u. a. `field`, `group`, `home`, `away`.
 
 ## Lokal testen
 
-Da die Seite per `fetch` auf `sample-data.json` zugreift, sollte lokal ein HTTP-Server genutzt werden:
+Da die Seite per `fetch` auf die aktiven Datenquellen unter `data/*.json` (sowie optional `sample-data.json` als Referenzvorlage im Adminbereich) zugreift, sollte lokal ein HTTP-Server genutzt werden:
 
 ```bash
 python3 -m http.server 8000

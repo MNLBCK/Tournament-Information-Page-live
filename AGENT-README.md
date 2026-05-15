@@ -37,7 +37,7 @@ Optional:
 Hash-Erzeugung (Beispiel):
 
 ```bash
-printf '%s' 'DEIN_PASSWORT' | sha256sum
+printf '%s' 'DEIN_PASSWORT' | sha256sum | awk '{print $1}'
 ```
 
 ### 2) Spielplan: `data/spielplan.json`
