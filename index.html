@@ -7,13 +7,12 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="theme-kids-football">
+  <body>
     <header class="card hero">
       <div class="hero-headline">
-        <img class="host-logo" src="Host_Logo.png" alt="Gastgeberlogo SG Hochberg/Hochdorf" />
         <div>
           <h1>Turnier-Auswahl</h1>
-          <p>Finde laufende, vergangene und kommende Turniere in deiner Nähe – mit Direktlink und QR-Code.</p>
+          <p>Finde laufende, vergangene und kommende Turniere in deiner Nähe – inklusive Datumsauswahl, Direktlink und QR-Code.</p>
         </div>
       </div>
     </header>
@@ -22,6 +21,10 @@
       <section class="card selector-search">
         <h2>Suche</h2>
         <p class="hint" id="locationStatus">Standort wird für Vorschläge genutzt (optional).</p>
+        <div class="date-filter">
+          <label for="tournamentDate">Datum wählen</label>
+          <input id="tournamentDate" type="date" aria-label="Turnierdatum auswählen" />
+        </div>
         <div class="autocomplete-wrap">
           <input id="tournamentSearch" type="search" placeholder="Turnier, Ort oder Datum suchen" autocomplete="off" aria-label="Turniersuche" />
           <div id="tournamentSuggestions" class="autocomplete-list" role="listbox" aria-label="Turnier-Vorschläge"></div>

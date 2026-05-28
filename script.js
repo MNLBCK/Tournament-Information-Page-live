@@ -13,6 +13,7 @@ const elements = {
   },
   searchSuggestions: document.querySelector('#searchSuggestions'),
   tournamentSearch: document.querySelector('#tournamentSearch'),
+  tournamentDate: document.querySelector('#tournamentDate'),
   tournamentSuggestions: document.querySelector('#tournamentSuggestions'),
   tournamentCards: document.querySelector('#tournamentCards'),
   locationStatus: document.querySelector('#locationStatus')
@@ -27,12 +28,15 @@ const state = {
   tournaments: [],
   selectedTournamentId: '',
   selectedTournament: null,
-  userPosition: null
+  userPosition: null,
+  selectedDate: ''
 };
 
 const hasScheduleUi = Boolean(elements.scheduleList);
 const hasSelectorUi = Boolean(elements.tournamentCards);
 const TOURNAMENT_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
+const MIN_VISIBLE_TOURNAMENTS = 5;
+const NEARBY_RADIUS_KM = 60;
 
 const createList = (items = []) => `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
 const setHtml = (node, html) => { if (node) node.innerHTML = html; };
@@ -335,19 +339,65 @@ function formatDistanceLabel(distanceKm) {
   return distanceKm < 10 ? `${distanceKm.toFixed(1)} km entfernt` : `${Math.round(distanceKm)} km entfernt`;
 }
 
+function parseIsoDate(isoDate = '') {
+  if (!isoDate) return null;
+  const dt = new Date(`${isoDate}T12:00:00`);
+  return Number.isNaN(dt.getTime()) ? null : dt;
+}
+
+function dayValue(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return Number.NaN;
+  return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function isSameDay(a, b) {
+  return dayValue(a) === dayValue(b);
+}
+
+function isWeekend(date) {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+}
+
+function weekendRange(date) {
+  const day = date.getDay();
+  const shiftToSaturday = day === 0 ? -1 : day === 6 ? 0 : 6 - day;
+  const saturday = new Date(dayValue(date) + shiftToSaturday * 24 * 3600 * 1000);
+  const sunday = new Date(dayValue(saturday) + 24 * 3600 * 1000);
+  return { start: saturday, end: sunday };
+}
+
+function parseSearchTokens(value = '') {
+  return value.toLowerCase().split(/\s+/).map((token) => token.trim()).filter(Boolean);
+}
+
+function eventDate(tournament = {}) {
+  return parseIsoDate(tournament.event?.date ?? '');
+}
+
+function queryMatchState(searchableText = '', queryTokens = []) {
+  if (!queryTokens.length) return { hasMatch: true, missingTokens: 0 };
+  const missingTokens = queryTokens.filter((token) => !searchableText.includes(token)).length;
+  return { hasMatch: missingTokens < queryTokens.length, missingTokens };
+}
+
 function searchableTournamentText(tournament = {}) {
   const event = tournament.event ?? {};
   return [
     event.name,
     event.location,
     formatDateDE(event.date ?? ''),
+    event.date,
     event.startTime,
     event.endTime,
     tournament.id
   ].filter(Boolean).join(' ').toLowerCase();
 }
 
-function tournamentSortValue(tournament, now, query, searchableText = '') {
+function tournamentSortValue(tournament, now, queryTokens = [], searchableText = '') {
+  const normalizedQueryTokens = Array.isArray(queryTokens)
+    ? queryTokens
+    : parseSearchTokens(String(queryTokens ?? ''));
   const status = tournamentStatus(tournament, now);
   const start = kickoffDate(tournament.event ?? {});
   const end = tournamentEndDate(tournament);
@@ -355,41 +405,104 @@ function tournamentSortValue(tournament, now, query, searchableText = '') {
   const timeDistance = status.key === 'past'
     ? Math.abs(now.getTime() - (end?.getTime() ?? Number.MAX_SAFE_INTEGER))
     : Math.abs((start?.getTime() ?? Number.MAX_SAFE_INTEGER) - now.getTime());
-  const queryBoost = query && searchableText.includes(query) ? 0 : 1;
+  const queryState = queryMatchState(searchableText, normalizedQueryTokens);
 
   return {
     statusRank: status.rank,
-    queryBoost,
+    queryBoost: queryState.missingTokens,
     distanceRank: distance == null ? Number.MAX_SAFE_INTEGER : distance,
     timeRank: timeDistance,
     name: String(tournament.event?.name ?? '')
   };
 }
 
-function filterAndSortTournaments() {
-  const query = (elements.tournamentSearch?.value ?? '').trim().toLowerCase();
+function filterBySearchWindow(tournaments = [], selectedDate = null) {
+  if (!selectedDate) return tournaments;
+
+  const primary = tournaments.filter((tournament) => {
+    const date = eventDate(tournament);
+    if (!date) return false;
+    if (isWeekend(selectedDate)) {
+      const range = weekendRange(selectedDate);
+      const value = dayValue(date);
+      return value >= dayValue(range.start) && value <= dayValue(range.end);
+    }
+    return isSameDay(date, selectedDate);
+  });
+  if (primary.length) return primary;
+
+  const expanded = tournaments.filter((tournament) => {
+    const date = eventDate(tournament);
+    if (!date) return false;
+    const diffDays = Math.abs(dayValue(date) - dayValue(selectedDate)) / (24 * 3600 * 1000);
+    return diffDays <= 30;
+  });
+  return expanded.length ? expanded : tournaments;
+}
+
+function ensureMinimumTournaments(base = [], minimum = MIN_VISIBLE_TOURNAMENTS) {
+  if (base.length >= minimum) return base;
   const now = new Date();
+  const queryTokens = parseSearchTokens(elements.tournamentSearch?.value ?? '');
   const searchCache = new Map(state.tournaments.map((tournament) => [tournament.id, searchableTournamentText(tournament)]));
-  const visible = state.tournaments.filter((tournament) => !query || (searchCache.get(tournament.id) ?? '').includes(query));
-  return visible.sort((a, b) => {
-    const va = tournamentSortValue(a, now, query, searchCache.get(a.id) ?? '');
-    const vb = tournamentSortValue(b, now, query, searchCache.get(b.id) ?? '');
+  const fallback = [...state.tournaments].sort((a, b) => {
+    const va = tournamentSortValue(a, now, queryTokens, searchCache.get(a.id) ?? '');
+    const vb = tournamentSortValue(b, now, queryTokens, searchCache.get(b.id) ?? '');
     return va.statusRank - vb.statusRank
       || va.queryBoost - vb.queryBoost
       || va.distanceRank - vb.distanceRank
       || va.timeRank - vb.timeRank
       || va.name.localeCompare(vb.name, 'de');
   });
+  const merged = [...base];
+  for (const tournament of fallback) {
+    if (merged.some((item) => item.id === tournament.id)) continue;
+    merged.push(tournament);
+    if (merged.length >= minimum) break;
+  }
+  return merged;
+}
+
+function filterAndSortTournaments(minimum = 0) {
+  const queryTokens = parseSearchTokens(elements.tournamentSearch?.value ?? '');
+  const now = new Date();
+  const selectedDate = parseIsoDate(state.selectedDate);
+  const searchCache = new Map(state.tournaments.map((tournament) => [tournament.id, searchableTournamentText(tournament)]));
+  const textMatches = state.tournaments.filter((tournament) => {
+    const queryState = queryMatchState(searchCache.get(tournament.id) ?? '', queryTokens);
+    return queryState.hasMatch;
+  });
+  const searchBase = textMatches.length ? textMatches : [...state.tournaments];
+  const nearbyBase = state.userPosition
+    ? (() => {
+      const nearby = searchBase.filter((tournament) => {
+        const distance = haversineKm(state.userPosition, tournament.geo);
+        return distance != null && distance <= NEARBY_RADIUS_KM;
+      });
+      return nearby.length ? nearby : searchBase;
+    })()
+    : searchBase;
+  const visible = filterBySearchWindow(nearbyBase, selectedDate);
+  const sorted = visible.sort((a, b) => {
+    const va = tournamentSortValue(a, now, queryTokens, searchCache.get(a.id) ?? '');
+    const vb = tournamentSortValue(b, now, queryTokens, searchCache.get(b.id) ?? '');
+    return va.statusRank - vb.statusRank
+      || va.queryBoost - vb.queryBoost
+      || va.distanceRank - vb.distanceRank
+      || va.timeRank - vb.timeRank
+      || va.name.localeCompare(vb.name, 'de');
+  });
+  return minimum > 0 ? ensureMinimumTournaments(sorted, minimum) : sorted;
 }
 
 function renderTournamentSuggestions() {
   if (!elements.tournamentSuggestions) return;
-  const query = (elements.tournamentSearch?.value ?? '').trim().toLowerCase();
-  if (!query) {
+  const queryTokens = parseSearchTokens(elements.tournamentSearch?.value ?? '');
+  if (!queryTokens.length) {
     elements.tournamentSuggestions.innerHTML = '';
     return;
   }
-  const suggestions = filterAndSortTournaments().slice(0, 6);
+  const suggestions = filterAndSortTournaments(MIN_VISIBLE_TOURNAMENTS).slice(0, MIN_VISIBLE_TOURNAMENTS);
   elements.tournamentSuggestions.innerHTML = suggestions.map((tournament) => {
     const event = tournament.event ?? {};
     return `<button type="button" class="autocomplete-item" data-id="${escapeHtml(tournament.id ?? '')}" role="option">${escapeHtml(event.name ?? 'Turnier')} · ${escapeHtml(formatDateDE(event.date ?? ''))}</button>`;
@@ -399,7 +512,7 @@ function renderTournamentSuggestions() {
 function renderTournamentCards() {
   if (!elements.tournamentCards) return;
   const now = new Date();
-  const tournaments = filterAndSortTournaments();
+  const tournaments = ensureMinimumTournaments(filterAndSortTournaments(MIN_VISIBLE_TOURNAMENTS), MIN_VISIBLE_TOURNAMENTS);
 
   if (!tournaments.length) {
     elements.tournamentCards.innerHTML = '<p class="hint">Keine Turniere für diese Suche gefunden.</p>';
@@ -441,6 +554,11 @@ function chooseDefaultTournamentId() {
 
 function wireTournamentSelector() {
   elements.tournamentSearch?.addEventListener('input', () => {
+    renderTournamentSuggestions();
+    renderTournamentCards();
+  });
+  elements.tournamentDate?.addEventListener('input', () => {
+    state.selectedDate = elements.tournamentDate?.value ?? '';
     renderTournamentSuggestions();
     renderTournamentCards();
   });
@@ -523,6 +641,11 @@ function renderDetailPages() {
 
 function renderSelectorPage() {
   markActiveNav();
+  if (elements.tournamentDate && !elements.tournamentDate.value) {
+    const today = new Date();
+    elements.tournamentDate.value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  }
+  state.selectedDate = elements.tournamentDate?.value ?? '';
   wireTournamentSelector();
   renderTournamentCards();
   requestUserLocation();
