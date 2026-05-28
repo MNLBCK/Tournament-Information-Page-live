@@ -415,7 +415,7 @@ function renderTournamentCards() {
     const distance = formatDistanceLabel(haversineKm(state.userPosition, tournament.geo));
     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(detailUrl)}`;
 
-    return `<article class="tournament-card"><div class="tournament-meta"><span class="status-badge status-${status.key}">${escapeHtml(status.label)}</span>${distance ? `<span class="distance-label">${escapeHtml(distance)}</span>` : ''}</div><h3>${escapeHtml(event.name ?? 'Turnier')}</h3><p>${escapeHtml(formatDateTimeDE(event.date ?? '', event.startTime ?? ''))}${event.endTime ? ` – ${escapeHtml(event.endTime)} Uhr` : ''}</p><p class="hint">${escapeHtml(event.location ?? '-')}</p><div class="tournament-actions"><a class="button" href="${escapeHtml(detailPath)}">Startseite öffnen</a><a class="button secondary" href="${escapeHtml(schedulePath)}">Spielplan</a></div><p class="direct-link"><strong>Direktlink:</strong> <a href="${escapeHtml(detailPath)}">${escapeHtml(detailUrl)}</a></p><img class="qr-code" src="${escapeHtml(qrUrl)}" alt="QR-Code für ${escapeHtml(event.name ?? 'Turnier')}" loading="lazy" /></article>`;
+    return `<article class="tournament-card"><div class="tournament-meta"><span class="status-badge status-${status.key}">${escapeHtml(status.label)}</span>${distance ? `<span class="distance-label">${escapeHtml(distance)}</span>` : ''}</div><h3>${escapeHtml(event.name ?? 'Turnier')}</h3><p>${escapeHtml(formatDateTimeDE(event.date ?? '', event.startTime ?? ''))}${event.endTime ? ` – ${escapeHtml(event.endTime)} Uhr` : ''}</p><p class="hint">${escapeHtml(event.location ?? '-')}</p><div class="tournament-actions"><a class="button" href="${escapeHtml(detailPath)}">Startseite öffnen</a><a class="button secondary" href="${escapeHtml(schedulePath)}">Spielplan</a></div><p class="direct-link"><strong>Direktlink:</strong> <a href="${escapeHtml(detailPath)}">${escapeHtml(detailUrl)}</a></p><img class="qr-code" src="${escapeHtml(qrUrl)}" alt="QR-Code für ${escapeHtml(event.name ?? 'Turnier')}" loading="lazy" referrerpolicy="no-referrer" /></article>`;
   }).join('');
 
   elements.tournamentCards.querySelectorAll('.qr-code').forEach((img) => {
@@ -528,6 +528,26 @@ function renderSelectorPage() {
   requestUserLocation();
 }
 
+function renderInitError(message = 'Unbekannter Fehler') {
+  const html = `<p class="hint">${escapeHtml(message)}</p>`;
+  const target = [
+    elements.scheduleList,
+    elements.tournamentCards,
+    elements.quickInfoContent,
+    elements.orgaInfoContent,
+    elements.cateringContent,
+    elements.directionsContent,
+    elements.fieldLayoutContent,
+    elements.kickoffCountdown
+  ].find(Boolean);
+  if (target) {
+    target.innerHTML = html;
+    return;
+  }
+  const main = document.querySelector('main');
+  if (main) main.innerHTML = `<section class="card">${html}</section>`;
+}
+
 async function init() {
   await loadConfigAndTournaments();
   applySiteConfig();
@@ -539,7 +559,6 @@ async function init() {
 }
 
 init().catch((error) => {
-  if (elements.scheduleList) elements.scheduleList.innerHTML = `<p class="hint">${escapeHtml(error.message)}</p>`;
-  if (elements.tournamentCards) elements.tournamentCards.innerHTML = `<p class="hint">${escapeHtml(error.message)}</p>`;
+  renderInitError(error.message);
   console.error(error);
 });
