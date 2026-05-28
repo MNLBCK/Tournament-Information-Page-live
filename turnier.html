@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spielplan | Spieltag-Info</title>
+    <title>Turnier | Spieltag-Info</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -11,7 +11,7 @@
     <header class="card hero">
       <div class="subpage-header">
         <img class="host-logo" src="Host_Logo.png" alt="Gastgeberlogo SG Hochberg/Hochdorf" />
-        <p id="pageMeta" data-subtitle="Spielplan">Turnier am --.--.---- | Spielplan</p>
+        <p id="pageMeta" data-subtitle="Start">Turnier am --.--.---- | Start</p>
       </div>
       <nav class="top-nav">
         <a class="button secondary" href="index.html" data-nav="index" data-page="index.html">Turniere</a>
@@ -22,19 +22,46 @@
         <a class="button secondary" href="spielplan.html" data-nav="spielplan" data-page="spielplan.html">Spielplan</a>
       </nav>
     </header>
+
     <main>
-      <section class="card schedule-card" id="schedule">
-        <p class="hint">Suche nach Feld/Gruppe, Mannschaft oder Verein.</p>
-        <div class="search-grid">
-          <div id="fieldFilterPills" class="pill-filter" role="group" aria-label="Feld-Filter"></div>
-          <div class="autocomplete-wrap">
-            <input id="searchTerm" type="search" placeholder="Mannschaft oder Verein" autocomplete="off" />
-            <div id="searchSuggestions" class="autocomplete-list" role="listbox" aria-label="Vorschläge"></div>
+      <section class="card">
+        <h2>⚽ Countdown bis zum ersten Anpfiff</h2>
+        <div id="kickoffCountdown">
+          <div class="cd-grid" id="cdGrid" hidden>
+            <div class="cd-box">
+              <span class="cd-num" id="cdDays">0</span>
+              <span class="cd-lbl">Tage</span>
+            </div>
+            <div class="cd-box">
+              <span class="cd-num" id="cdHours">00</span>
+              <span class="cd-lbl">Stunden</span>
+            </div>
+            <div class="cd-box">
+              <span class="cd-num" id="cdMinutes">00</span>
+              <span class="cd-lbl">Minuten</span>
+            </div>
+            <div class="cd-box">
+              <span class="cd-num" id="cdSeconds">00</span>
+              <span class="cd-lbl">Sekunden</span>
+            </div>
           </div>
+          <p id="cdMessage">Wird geladen …</p>
         </div>
-        <div id="scheduleList" class="match-list"></div>
+      </section>
+
+      <section class="card">
+        <h2>Orga-Infos</h2>
+        <div id="orgaInfoContent"></div>
+      </section>
+
+      <section class="card">
+        <h2>Kurzinformationen</h2>
+        <div id="quickInfoContent"></div>
       </section>
     </main>
+
+    <footer><small>GitHub Pages kompatible, statische Website.</small></footer>
+
     <script type="module" src="script.js"></script>
   </body>
 </html>

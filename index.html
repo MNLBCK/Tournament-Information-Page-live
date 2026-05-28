@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spieltag-Info</title>
+    <title>Turnier-Auswahl | Spieltag-Info</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -12,53 +12,25 @@
       <div class="hero-headline">
         <img class="host-logo" src="Host_Logo.png" alt="Gastgeberlogo SG Hochberg/Hochdorf" />
         <div>
-          <h1>Spieltag-Informationen</h1>
-          <p>Willkommen beim Heimturnier der <strong>SG Hochberg/Hochdorf</strong> – alle Infos für Eltern, Trainer und Gäste auf einen Blick.</p>
+          <h1>Turnier-Auswahl</h1>
+          <p>Finde laufende, vergangene und kommende Turniere in deiner Nähe – mit Direktlink und QR-Code.</p>
         </div>
       </div>
-      <nav class="top-nav">
-  <a class="button secondary" href="index.html" data-nav="index">Start</a>
-  <a class="button secondary" href="verpflegung.html" data-nav="verpflegung">Verpflegung</a>
-  <a class="button secondary" href="anfahrt.html" data-nav="anfahrt">Anfahrt</a>
-  <a class="button secondary" href="spielfeldlayout.html" data-nav="spielfeldlayout">Spielfelder</a>
-  <a class="button secondary" href="spielplan.html" data-nav="spielplan">Spielplan</a>
-</nav>
     </header>
 
     <main>
-      <section class="card">
-        <h2>⚽ Countdown bis zum ersten Anpfiff</h2>
-        <div id="kickoffCountdown">
-          <div class="cd-grid" id="cdGrid" hidden>
-            <div class="cd-box">
-              <span class="cd-num" id="cdDays">0</span>
-              <span class="cd-lbl">Tage</span>
-            </div>
-            <div class="cd-box">
-              <span class="cd-num" id="cdHours">00</span>
-              <span class="cd-lbl">Stunden</span>
-            </div>
-            <div class="cd-box">
-              <span class="cd-num" id="cdMinutes">00</span>
-              <span class="cd-lbl">Minuten</span>
-            </div>
-            <div class="cd-box">
-              <span class="cd-num" id="cdSeconds">00</span>
-              <span class="cd-lbl">Sekunden</span>
-            </div>
-          </div>
-          <p id="cdMessage">Wird geladen …</p>
+      <section class="card selector-search">
+        <h2>Suche</h2>
+        <p class="hint" id="locationStatus">Standort wird für Vorschläge genutzt (optional).</p>
+        <div class="autocomplete-wrap">
+          <input id="tournamentSearch" type="search" placeholder="Turnier, Ort oder Datum suchen" autocomplete="off" />
+          <div id="tournamentSuggestions" class="autocomplete-list" role="listbox" aria-label="Turnier-Vorschläge"></div>
         </div>
       </section>
 
       <section class="card">
-        <h2>Orga-Infos</h2>
-        <div id="orgaInfoContent"></div>
-      </section>
-
-      <section class="card">
-        <h2>Kurzinformationen</h2>
-        <div id="quickInfoContent"></div>
+        <h2>Vorschläge</h2>
+        <div id="tournamentCards" class="tournament-grid"></div>
       </section>
     </main>
 

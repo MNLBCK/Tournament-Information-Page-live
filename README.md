@@ -2,45 +2,38 @@
 
 ![Website-Logo](favicon.svg)
 
-Statische, mobilefreundliche Website für Spieltags- und Turnierinformationen (GitHub Pages kompatibel).
+Statische, mobilefreundliche Website für mehrere Turnierseiten (GitHub Pages kompatibel).
 
 ## IST-Stand
 
-Die Website besteht aus einer Startseite und separaten Unterseiten:
+Die Website bietet jetzt eine vorgeschaltete Auswahlseite plus Turnier-Unterseiten:
 
-- `index.html` – Startseite mit Kurzinformationen, Countdown bis zum ersten Anpfiff und Navigation
-- `verpflegung.html` – Verpflegungsinformationen
-- `anfahrt.html` – Anfahrt, Parken, ÖPNV
-- `spielfeldlayout.html` – Seite „Spielfelder“ mit Lageplan
-- `spielplan.html` – kompakter Spielplan mit Filterung, Dropdowns und Autocomplete
+- `index.html` – Turnier-Auswahl mit Suche, Zeitstatus (läuft/lief/läuft bald), Geo-basierter Sortierung, Direktlink und QR-Code
+- `turnier.html` – Turnier-Startseite mit Countdown, Orga-Infos und Kurzinformationen
+- `verpflegung.html` – Verpflegungsinformationen des gewählten Turniers
+- `anfahrt.html` – Anfahrt, Parken, ÖPNV/Website des gewählten Turniers
+- `spielfeldlayout.html` – Spielfeld- und Lageplan des gewählten Turniers
+- `spielplan.html` – Spielplan mit Filterung, Feld-Pills und Autocomplete
 
-Auf der Startseite werden zusätzlich angezeigt:
+Turniere werden über den Query-Parameter `?t=<turnier-id>` ausgewählt. Damit sind Direktlinks und QR-Codes pro Turnier möglich.
 
-- Countdown bis zum ersten Spiel (berechnet aus `event.date` + `event.startTime`)
-- Trainerbesprechung (Uhrzeit und Ort)
-- Siegerehrung (geplant: ja/nein, optional mit Zeit und Ort)
-- Begrüßung des ausrichtenden Vereins SG Hochberg/Hochdorf
+## Datenmodell
 
-## Navigation und Darstellung
+- `data/tournaments.json` enthält mehrere Turniere mit:
+  - `id`
+  - `event` (inkl. Datum, Startzeit, optional Endzeit)
+  - `geo` (lat/lon)
+  - `quickInfo`, `trainerMeeting`, `awardCeremony`
+  - `catering`, `directions`, `fieldLayout`
+  - `matches`
 
-- Einheitliche Top-Leiste auf allen Seiten
-- Aktive Seite in der Top-Leiste hervorgehoben
-- Mobile-first Layout mit kompakter, sticky Kopfzeile
-- Im Spielplan wird während des Turniers automatisch zum aktuell laufenden Spiel gescrollt
+Bestehende Einzeldateien unter `data/*.json` bleiben als Referenz erhalten.
 
 ## Projektstruktur
 
-- `styles.css` – responsives Layout inkl. kompakter Sticky-Kopfzeile
-- `script.js` – Laden, Rendern, Countdown, Filterung, Autocomplete, Auto-Scroll
-- `Host_Logo.png` – Gastgeberlogo für die Seitenköpfe
-- `logo.svg` – Website-Logo
-- `favicon.svg` – Favicon
-- `data/*.json` – fachliche Datenquellen (Event, Verpflegung, Anfahrt, Spielfeldlayout, Spielplan)
-
-## Logos und Favicon
-
-- Website nutzt das Gastgeberlogo `Host_Logo.png` im Kopfbereich jeder Seite.
-- Website-Logo `logo.svg` und Favicon `favicon.svg` sind als zentrale Assets im Repository enthalten.
+- `styles.css` – responsives Layout inkl. Auswahlkarten, Status-Badges und QR-Code-Darstellung
+- `script.js` – Laden der Turnierdaten, Auswahl/Suche, Geo-/Zeit-Vorschläge, Rendern der Turnierseiten
+- `scripts/pages-preflight.sh` – Preflight inkl. Validierung von `data/tournaments.json`
 
 ## Lokal testen
 

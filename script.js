@@ -11,13 +11,29 @@ const elements = {
     searchTerm: document.querySelector('#searchTerm'),
     fieldPills: document.querySelector('#fieldFilterPills')
   },
-  searchSuggestions: document.querySelector('#searchSuggestions')
+  searchSuggestions: document.querySelector('#searchSuggestions'),
+  tournamentSearch: document.querySelector('#tournamentSearch'),
+  tournamentSuggestions: document.querySelector('#tournamentSuggestions'),
+  tournamentCards: document.querySelector('#tournamentCards'),
+  locationStatus: document.querySelector('#locationStatus')
 };
 
-const state = { data: null, countdownTimer: null, siteTitle: '', activeField: '', searchPool: [], fieldColors: {} };
-const hasScheduleUi = Boolean(elements.scheduleList);
+const state = {
+  countdownTimer: null,
+  siteTitle: '',
+  activeField: '',
+  searchPool: [],
+  fieldColors: {},
+  tournaments: [],
+  selectedTournamentId: '',
+  selectedTournament: null,
+  userPosition: null
+};
 
-const createList = (items = []) => `<ul>${items.map((item) => `<li>${item}</li>`).join('')}</ul>`;
+const hasScheduleUi = Boolean(elements.scheduleList);
+const hasSelectorUi = Boolean(elements.tournamentCards);
+
+const createList = (items = []) => `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
 const setHtml = (node, html) => { if (node) node.innerHTML = html; };
 const escapeHtml = (value = '') => String(value)
   .replaceAll('&', '&amp;')
@@ -25,9 +41,15 @@ const escapeHtml = (value = '') => String(value)
   .replaceAll('>', '&gt;')
   .replaceAll('"', '&quot;')
   .replaceAll("'", '&#39;');
+
 const formatDateDE = (isoDate = '') => {
   const [year, month, day] = isoDate.split('-');
   return year && month && day ? `${day}.${month}.${year}` : isoDate;
+};
+
+const formatDateTimeDE = (isoDate = '', time = '') => {
+  const d = formatDateDE(isoDate);
+  return d && time ? `${d}, ${time} Uhr` : d || time;
 };
 
 function safeImageUrl(value = '') {
@@ -44,43 +66,124 @@ function kickoffDate(eventData = {}) {
   return new Date(`${eventData.date}T${eventData.startTime}:00`);
 }
 
-function renderCountdown(data) {
+function matchDateForTournament(tournament, time) {
+  const [h, m] = String(time ?? '').split(':').map(Number);
+  const dt = kickoffDate(tournament?.event ?? {});
+  if (!dt || Number.isNaN(h) || Number.isNaN(m)) return null;
+  dt.setHours(h, m, 0, 0);
+  return dt;
+}
+
+function tournamentEndDate(tournament = {}) {
+  const event = tournament.event ?? {};
+  if (event.date && event.endTime) {
+    const fixed = new Date(`${event.date}T${event.endTime}:00`);
+    if (!Number.isNaN(fixed.getTime())) return fixed;
+  }
+  const matches = tournament.matches ?? [];
+  const lastMatch = matches[matches.length - 1];
+  const lastStart = lastMatch ? matchDateForTournament(tournament, lastMatch.time) : null;
+  if (lastStart) return new Date(lastStart.getTime() + 10 * 60000);
+  return kickoffDate(event);
+}
+
+function tournamentStatus(tournament = {}, now = new Date()) {
+  const start = kickoffDate(tournament.event ?? {});
+  const end = tournamentEndDate(tournament);
+  if (!start || !end) return { key: 'unknown', label: 'Unbekannt', rank: 3 };
+  if (now >= start && now <= end) return { key: 'running', label: 'Läuft gerade', rank: 0 };
+  if (now < start) return { key: 'upcoming', label: 'Kommt noch', rank: 1 };
+  return { key: 'past', label: 'Bereits vorbei', rank: 2 };
+}
+
+function haversineKm(from, to) {
+  if (!from || !to) return null;
+  const p = Math.PI / 180;
+  const lat1 = Number(from.lat);
+  const lon1 = Number(from.lon);
+  const lat2 = Number(to.lat);
+  const lon2 = Number(to.lon);
+  if ([lat1, lon1, lat2, lon2].some((n) => Number.isNaN(n))) return null;
+  const dLat = (lat2 - lat1) * p;
+  const dLon = (lon2 - lon1) * p;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * p) * Math.cos(lat2 * p) * Math.sin(dLon / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(a));
+}
+
+function selectedTournamentIdFromUrl() {
+  return new URLSearchParams(location.search).get('t') ?? '';
+}
+
+function pageUrlWithTournament(page, tournamentId) {
+  if (!tournamentId) return page;
+  const params = new URLSearchParams({ t: tournamentId });
+  return `${page}?${params.toString()}`;
+}
+
+function applySiteConfig() {
+  if (!state.siteTitle) return;
+  document.title = `${document.title.split(' | ')[0]} | ${state.siteTitle}`;
+}
+
+function applyPageMeta(eventData = {}) {
+  if (!elements.pageMeta) return;
+  const subtitle = elements.pageMeta.getAttribute('data-subtitle') ?? '';
+  const titlePart = eventData.name ?? 'Turnier';
+  const datePart = formatDateDE(eventData.date ?? '');
+  elements.pageMeta.textContent = `${titlePart} am ${datePart}${subtitle ? ` | ${subtitle}` : ''}`;
+}
+
+function markActiveNav() {
+  const key = (location.pathname.split('/').pop() || 'index.html').replace('.html', '');
+  document.querySelectorAll('.top-nav [data-nav]').forEach((el) => {
+    if (el.getAttribute('data-nav') === key) el.classList.add('active');
+  });
+}
+
+function applyTournamentLinksToNav() {
+  if (!state.selectedTournamentId) return;
+  document.querySelectorAll('.top-nav [data-page]').forEach((el) => {
+    const page = el.getAttribute('data-page');
+    if (!page || page === 'index.html') return;
+    el.setAttribute('href', pageUrlWithTournament(page, state.selectedTournamentId));
+  });
+}
+
+function renderCountdown(tournament) {
   if (!elements.kickoffCountdown) return;
-  const startDate = kickoffDate(data.event ?? {});
+  const startDate = kickoffDate(tournament?.event ?? {});
   if (!startDate || Number.isNaN(startDate.getTime())) return;
 
   const grid = document.getElementById('cdGrid');
   const message = document.getElementById('cdMessage');
   const daysEl = document.getElementById('cdDays');
   const daysBox = daysEl ? daysEl.closest('.cd-box') : null;
-  const daysSep = daysBox ? daysBox.nextElementSibling : null;
   const hoursEl = document.getElementById('cdHours');
   const minutesEl = document.getElementById('cdMinutes');
   const secondsEl = document.getElementById('cdSeconds');
-  const SECONDS_PER_DAY = 86400;
-  const SECONDS_PER_HOUR = 3600;
-  const SECONDS_PER_MINUTE = 60;
-  const zeroPad = (n) => String(n).padStart(2, '0');
 
   const update = () => {
     const diff = startDate.getTime() - Date.now();
     if (diff <= 0) {
       if (grid) grid.hidden = true;
-      if (message) { message.className = 'cd-done'; message.textContent = '🎉 Das erste Spiel hat bereits begonnen!'; message.hidden = false; }
+      if (message) {
+        message.className = 'cd-done';
+        message.textContent = '🎉 Das erste Spiel hat bereits begonnen!';
+        message.hidden = false;
+      }
       return;
     }
     const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hideDays = totalSeconds < 86400;
+
     if (grid) grid.hidden = false;
     if (message) message.hidden = true;
-    const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
-    const hideDays = totalSeconds < SECONDS_PER_DAY;
     if (daysBox) daysBox.hidden = hideDays;
-    if (daysEl) {
-      daysEl.textContent = days;
-    }
-    if (hoursEl) hoursEl.textContent = zeroPad(Math.floor((totalSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR));
-    if (minutesEl) minutesEl.textContent = zeroPad(Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE));
-    if (secondsEl) secondsEl.textContent = zeroPad(totalSeconds % SECONDS_PER_MINUTE);
+    if (daysEl) daysEl.textContent = String(days);
+    if (hoursEl) hoursEl.textContent = String(Math.floor((totalSeconds % 86400) / 3600)).padStart(2, '0');
+    if (minutesEl) minutesEl.textContent = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    if (secondsEl) secondsEl.textContent = String(totalSeconds % 60).padStart(2, '0');
   };
 
   if (state.countdownTimer) clearInterval(state.countdownTimer);
@@ -88,62 +191,62 @@ function renderCountdown(data) {
   state.countdownTimer = window.setInterval(update, 1000);
 }
 
-function renderInfo(data) {
-  setHtml(elements.quickInfoContent, createList(data.quickInfo));
-  const tm = data.trainerMeeting ?? {};
-  const ac = data.awardCeremony ?? {};
-  setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${tm.time ?? '-'} Uhr, ${tm.location ?? '-'}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${ac.time ? `, geplant um ${ac.time} Uhr` : ''}${ac.location ? ` (${ac.location})` : ''}.` : 'Nein.'}</p>`);
-  const c = data.catering ?? {};
+function renderTournamentInfo(tournament = {}) {
+  setHtml(elements.quickInfoContent, createList(tournament.quickInfo));
+
+  const tm = tournament.trainerMeeting ?? {};
+  const ac = tournament.awardCeremony ?? {};
+  setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${escapeHtml(tm.time ?? '-')} Uhr, ${escapeHtml(tm.location ?? '-')}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${ac.time ? `, geplant um ${escapeHtml(ac.time)} Uhr` : ''}${ac.location ? ` (${escapeHtml(ac.location)})` : ''}.` : 'Nein.'}</p>`);
+
+  const c = tournament.catering ?? {};
   if (Array.isArray(c.categories) && c.categories.length) {
     const tablesHtml = c.categories.map((cat) => {
-      const rows = (cat.items ?? []).map((item) => `<tr><td class="catering-icon">${item.icon ?? ''}</td><td>${item.name}</td><td class="catering-price">${item.price}</td></tr>`).join('');
-      return `<h3 class="catering-heading">${cat.icon ? `${cat.icon} ` : ''}${cat.name}</h3><table class="catering-table"><tbody>${rows}</tbody></table>`;
+      const rows = (cat.items ?? []).map((item) => `<tr><td class="catering-icon">${escapeHtml(item.icon ?? '')}</td><td>${escapeHtml(item.name)}</td><td class="catering-price">${escapeHtml(item.price ?? '')}</td></tr>`).join('');
+      return `<h3 class="catering-heading">${cat.icon ? `${escapeHtml(cat.icon)} ` : ''}${escapeHtml(cat.name ?? '')}</h3><table class="catering-table"><tbody>${rows}</tbody></table>`;
     }).join('');
-    const notesHtml = c.notes ? `<p class="catering-notes"><strong>Hinweis:</strong> ${c.notes}</p>` : '';
+    const notesHtml = c.notes ? `<p class="catering-notes"><strong>Hinweis:</strong> ${escapeHtml(c.notes)}</p>` : '';
     setHtml(elements.cateringContent, tablesHtml + notesHtml);
   } else {
-    setHtml(elements.cateringContent, `${createList(c.offerings ?? [])}<p><strong>Hinweis:</strong> ${c.notes ?? '-'}</p>`);
+    setHtml(elements.cateringContent, `${createList(c.offerings ?? [])}<p><strong>Hinweis:</strong> ${escapeHtml(c.notes ?? '-')}</p>`);
   }
-  const d = data.directions ?? {};
-  const addressHtml = (d.address ?? '-').replace(/\n/g, '<br />');
-  const websiteHtml = d.website ? `<p><strong>Website:</strong> <a href="${d.website}" target="_blank" rel="noopener noreferrer">${d.website}</a></p>` : '';
-  const noticeHtml = d.notice ? `<p><strong>Hinweis:</strong> ${d.notice}</p>` : '';
-  setHtml(elements.directionsContent, `<p><strong>Adresse:</strong><br />${addressHtml}</p>${websiteHtml}${noticeHtml}<p><strong>Parken:</strong> ${d.parking ?? '-'}</p>`);
-  const f = data.fieldLayout ?? {};
+
+  const d = tournament.directions ?? {};
+  const addressHtml = escapeHtml(d.address ?? '-').replace(/\n/g, '<br />');
+  const website = String(d.website ?? '').trim();
+  const websiteUrl = safeImageUrl(website);
+  const websiteHtml = websiteUrl ? `<p><strong>Website:</strong> <a href="${escapeHtml(websiteUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(website)}</a></p>` : '';
+  const noticeHtml = d.notice ? `<p><strong>Hinweis:</strong> ${escapeHtml(d.notice)}</p>` : '';
+  setHtml(elements.directionsContent, `<p><strong>Adresse:</strong><br />${addressHtml}</p>${websiteHtml}${noticeHtml}<p><strong>Parken:</strong> ${escapeHtml(d.parking ?? '-')}</p>`);
+
+  const f = tournament.fieldLayout ?? {};
   const fieldListHtml = createList((f.fields ?? []).map((x) => `${x.field}: ${x.group}`));
   const imageUrl = safeImageUrl(f.image?.url ?? '');
   const imageHtml = imageUrl
     ? `<figure class="field-layout-figure"><img class="field-layout-image" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(f.image?.alt ?? 'Spielfelder')}" loading="lazy" /></figure>`
     : '';
   setHtml(elements.fieldLayoutContent, `<h2 class="field-layout-title">${escapeHtml(f.title ?? 'Spielfelder')}</h2><p>${escapeHtml(f.summary ?? '-')}</p>${imageHtml}${fieldListHtml}`);
-  renderCountdown(data);
+
+  renderCountdown(tournament);
 }
 
 function currentFilters() {
   const query = elements.filters.searchTerm?.value.trim().toLowerCase() ?? '';
-  return {
-    field: state.activeField.toLowerCase(),
-    query
-  };
+  return { field: state.activeField.toLowerCase(), query };
 }
 
-function matchesFilter(match, q) {
-  return (!q.field || match.field.toLowerCase() === q.field || match.group.toLowerCase() === q.field)
-    && (!q.query || [match.home.team, match.away.team, match.home.club, match.away.club].some((v) => v.toLowerCase().includes(q.query)));
+function matchesFilter(match, filter) {
+  const values = [match.home?.team, match.away?.team, match.home?.club, match.away?.club].filter(Boolean).map((v) => v.toLowerCase());
+  return (!filter.field || (match.field ?? '').toLowerCase() === filter.field || (match.group ?? '').toLowerCase() === filter.field)
+    && (!filter.query || values.some((v) => v.includes(filter.query)));
 }
 
 function parseMatchDate(time) {
-  const [h, m] = time.split(':').map(Number);
-  const dt = kickoffDate(state.data?.event ?? {});
-  if (!dt || Number.isNaN(h) || Number.isNaN(m)) return null;
-  dt.setHours(h, m, 0, 0);
-  return dt;
+  return matchDateForTournament(state.selectedTournament, time);
 }
 
 function renderMatches() {
-  if (!hasScheduleUi || !state.data) return;
-  const event = state.data.event ?? {};
-  const allMatches = state.data.matches ?? [];
+  if (!hasScheduleUi || !state.selectedTournament) return;
+  const allMatches = state.selectedTournament.matches ?? [];
   const filtered = allMatches.filter((match) => matchesFilter(match, currentFilters()));
 
   if (!filtered.length) {
@@ -160,49 +263,32 @@ function renderMatches() {
     const id = `match-${i}`;
     if (isRunning && !firstActiveId) firstActiveId = id;
 
-    const fieldName = m.field || m.group;
-    const fieldClass = `field-${fieldName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    const fieldName = m.field || m.group || 'Feld';
     const colorClass = state.fieldColors[fieldName.toLowerCase()] ?? '';
 
-    return `<article id="${id}" class="match-card ${fieldClass}${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${m.time}</strong><span class="pill field-pill ${colorClass}">${fieldName}</span></div><p class="match-line">${m.home.team} : ${m.away.team}</p></article>`;
+    return `<article id="${id}" class="match-card${isRunning ? ' is-running' : ''}"><div class="match-header"><strong>${escapeHtml(m.time ?? '--:--')}</strong><span class="pill field-pill ${colorClass}">${escapeHtml(fieldName)}</span></div><p class="match-line">${escapeHtml(m.home?.team ?? 'TBD')} : ${escapeHtml(m.away?.team ?? 'TBD')}</p></article>`;
   }).join('');
 
   if (firstActiveId) document.getElementById(firstActiveId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-function validateData(data) {
-  return Boolean(data && data.event && Array.isArray(data.matches));
-}
-
-function applySiteConfig() {
-  if (!state.siteTitle) return;
-  document.title = `${document.title.split(' | ')[0]} | ${state.siteTitle}`;
-}
-
-function applyPageMeta(eventData = {}) {
-  if (!elements.pageMeta) return;
-  const subtitle = elements.pageMeta.getAttribute('data-subtitle') ?? '';
-  const titlePart = eventData.name ?? 'Turnier';
-  const datePart = formatDateDE(eventData.date ?? '');
-  elements.pageMeta.textContent = `${titlePart} am ${datePart}${subtitle ? ` | ${subtitle}` : ''}`;
-}
-
 function populateScheduleFilters() {
-  if (!hasScheduleUi || !state.data) return;
-  const matches = state.data.matches ?? [];
+  if (!hasScheduleUi || !state.selectedTournament) return;
+  const matches = state.selectedTournament.matches ?? [];
   const uniq = (arr) => [...new Set(arr.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
   const fields = uniq(matches.map((m) => m.field || m.group));
-  state.searchPool = uniq(matches.flatMap((m) => [m.home.team, m.away.team, m.home.club, m.away.club]));
+  state.searchPool = uniq(matches.flatMap((m) => [m.home?.team, m.away?.team, m.home?.club, m.away?.club]));
 
-  const PILL_PALETTE = ['pill-c0', 'pill-c1', 'pill-c2', 'pill-c3', 'pill-c4', 'pill-c5'];
-  fields.forEach((f, i) => { state.fieldColors[f.toLowerCase()] = PILL_PALETTE[i % PILL_PALETTE.length]; });
+  state.fieldColors = {};
+  const palette = ['pill-c0', 'pill-c1', 'pill-c2', 'pill-c3', 'pill-c4', 'pill-c5'];
+  fields.forEach((field, i) => { state.fieldColors[field.toLowerCase()] = palette[i % palette.length]; });
 
   if (elements.filters.fieldPills) {
     const pills = ['Alle', ...fields].map((name) => {
       const value = name === 'Alle' ? '' : name;
       const active = value === state.activeField;
       const colorClass = name === 'Alle' ? '' : ` ${state.fieldColors[name.toLowerCase()]}`;
-      return `<button type="button" class="pill${colorClass}${active ? ' is-active' : ''}" data-field="${value}">${name}</button>`;
+      return `<button type="button" class="pill${colorClass}${active ? ' is-active' : ''}" data-field="${escapeHtml(value)}">${escapeHtml(name)}</button>`;
     }).join('');
     elements.filters.fieldPills.innerHTML = pills;
   }
@@ -215,29 +301,10 @@ function updateSearchSuggestions() {
     elements.searchSuggestions.innerHTML = '';
     return;
   }
-
   window.setTimeout(() => {
     const hits = state.searchPool.filter((value) => value.toLowerCase().includes(q)).slice(0, 8);
-    elements.searchSuggestions.innerHTML = hits.map((hit) => `<button type="button" class="autocomplete-item" role="option">${hit}</button>`).join('');
+    elements.searchSuggestions.innerHTML = hits.map((hit) => `<button type="button" class="autocomplete-item" role="option">${escapeHtml(hit)}</button>`).join('');
   }, 120);
-}
-async function loadJson(path, err) {
-  const r = await fetch(path);
-  if (!r.ok) throw new Error(err);
-  return r.json();
-}
-
-async function loadAllData() {
-  const [config, eventData, cateringData, directionsData, fieldLayoutData, scheduleData] = await Promise.all([
-    loadJson('./data/config.json', 'Konfiguration konnte nicht geladen werden.'),
-    loadJson('./data/event.json', 'Event-Daten konnten nicht geladen werden.'),
-    loadJson('./data/catering.json', 'Verpflegungsdaten konnten nicht geladen werden.'),
-    loadJson('./data/anfahrt.json', 'Anfahrtsdaten konnten nicht geladen werden.'),
-    loadJson('./data/spielfeldlayout.json', 'Spielfeldlayout konnte nicht geladen werden.'),
-    loadJson('./data/spielplan.json', 'Spielplandaten konnten nicht geladen werden.')
-  ]);
-  state.siteTitle = config.siteTitle ?? '';
-  return { ...scheduleData, ...eventData, ...cateringData, ...directionsData, ...fieldLayoutData };
 }
 
 function wireScheduleFilters() {
@@ -259,26 +326,199 @@ function wireScheduleFilters() {
   });
 }
 
-function markActiveNav() {
-  const key = (location.pathname.split('/').pop() || 'index.html').replace('.html', '');
-  document.querySelectorAll('.top-nav [data-nav]').forEach((el) => {
-    if (el.getAttribute('data-nav') === key) el.classList.add('active');
+function formatDistanceLabel(distanceKm) {
+  if (distanceKm == null) return '';
+  return distanceKm < 10 ? `${distanceKm.toFixed(1)} km entfernt` : `${Math.round(distanceKm)} km entfernt`;
+}
+
+function searchableTournamentText(tournament = {}) {
+  const event = tournament.event ?? {};
+  return [
+    event.name,
+    event.location,
+    formatDateDE(event.date ?? ''),
+    event.startTime,
+    event.endTime,
+    tournament.id
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+
+function tournamentSortValue(tournament, now, query) {
+  const status = tournamentStatus(tournament, now);
+  const start = kickoffDate(tournament.event ?? {});
+  const end = tournamentEndDate(tournament);
+  const distance = haversineKm(state.userPosition, tournament.geo);
+  const timeDistance = status.key === 'past'
+    ? Math.abs(now.getTime() - (end?.getTime() ?? Number.MAX_SAFE_INTEGER))
+    : Math.abs((start?.getTime() ?? Number.MAX_SAFE_INTEGER) - now.getTime());
+  const queryBoost = query && searchableTournamentText(tournament).includes(query) ? 0 : 1;
+
+  return {
+    statusRank: status.rank,
+    queryBoost,
+    distanceRank: distance == null ? Number.MAX_SAFE_INTEGER : distance,
+    timeRank: timeDistance,
+    name: String(tournament.event?.name ?? '')
+  };
+}
+
+function filterAndSortTournaments() {
+  const query = (elements.tournamentSearch?.value ?? '').trim().toLowerCase();
+  const now = new Date();
+  const visible = state.tournaments.filter((tournament) => !query || searchableTournamentText(tournament).includes(query));
+  return visible.sort((a, b) => {
+    const va = tournamentSortValue(a, now, query);
+    const vb = tournamentSortValue(b, now, query);
+    return va.statusRank - vb.statusRank
+      || va.queryBoost - vb.queryBoost
+      || va.distanceRank - vb.distanceRank
+      || va.timeRank - vb.timeRank
+      || va.name.localeCompare(vb.name, 'de');
   });
 }
 
-async function init() {
-  state.data = await loadAllData();
-  if (!validateData(state.data)) throw new Error('JSON ungültig: Erwartet wird mindestens "event" und "matches".');
-  applySiteConfig();
-  applyPageMeta(state.data.event ?? {});
-  renderInfo(state.data);
+function renderTournamentSuggestions() {
+  if (!elements.tournamentSuggestions) return;
+  const query = (elements.tournamentSearch?.value ?? '').trim().toLowerCase();
+  if (!query) {
+    elements.tournamentSuggestions.innerHTML = '';
+    return;
+  }
+  const suggestions = filterAndSortTournaments().slice(0, 6);
+  elements.tournamentSuggestions.innerHTML = suggestions.map((tournament) => {
+    const event = tournament.event ?? {};
+    return `<button type="button" class="autocomplete-item" data-id="${escapeHtml(tournament.id ?? '')}" role="option">${escapeHtml(event.name ?? 'Turnier')} · ${escapeHtml(formatDateDE(event.date ?? ''))}</button>`;
+  }).join('');
+}
+
+function renderTournamentCards() {
+  if (!elements.tournamentCards) return;
+  const now = new Date();
+  const tournaments = filterAndSortTournaments();
+
+  if (!tournaments.length) {
+    elements.tournamentCards.innerHTML = '<p class="hint">Keine Turniere für diese Suche gefunden.</p>';
+    return;
+  }
+
+  elements.tournamentCards.innerHTML = tournaments.map((tournament) => {
+    const event = tournament.event ?? {};
+    const status = tournamentStatus(tournament, now);
+    const detailPath = pageUrlWithTournament('turnier.html', tournament.id);
+    const detailUrl = new URL(detailPath, location.href).href;
+    const schedulePath = pageUrlWithTournament('spielplan.html', tournament.id);
+    const distance = formatDistanceLabel(haversineKm(state.userPosition, tournament.geo));
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(detailUrl)}`;
+
+    return `<article class="tournament-card"><div class="tournament-meta"><span class="status-badge status-${status.key}">${escapeHtml(status.label)}</span>${distance ? `<span class="distance-label">${escapeHtml(distance)}</span>` : ''}</div><h3>${escapeHtml(event.name ?? 'Turnier')}</h3><p>${escapeHtml(formatDateTimeDE(event.date ?? '', event.startTime ?? ''))}${event.endTime ? ` – ${escapeHtml(event.endTime)} Uhr` : ''}</p><p class="hint">${escapeHtml(event.location ?? '-')}</p><div class="tournament-actions"><a class="button" href="${escapeHtml(detailPath)}">Startseite öffnen</a><a class="button secondary" href="${escapeHtml(schedulePath)}">Spielplan</a></div><p class="direct-link"><strong>Direktlink:</strong> <a href="${escapeHtml(detailPath)}">${escapeHtml(detailUrl)}</a></p><img class="qr-code" src="${escapeHtml(qrUrl)}" alt="QR-Code für ${escapeHtml(event.name ?? 'Turnier')}" loading="lazy" /></article>`;
+  }).join('');
+}
+
+function chooseDefaultTournamentId() {
+  const tournaments = [...state.tournaments];
+  const now = new Date();
+  tournaments.sort((a, b) => {
+    const va = tournamentSortValue(a, now, '');
+    const vb = tournamentSortValue(b, now, '');
+    return va.statusRank - vb.statusRank || va.timeRank - vb.timeRank;
+  });
+  return tournaments[0]?.id ?? '';
+}
+
+function wireTournamentSelector() {
+  elements.tournamentSearch?.addEventListener('input', () => {
+    renderTournamentSuggestions();
+    renderTournamentCards();
+  });
+  elements.tournamentSuggestions?.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-id]');
+    if (!button || !elements.tournamentSearch) return;
+    const id = button.getAttribute('data-id') ?? '';
+    const tournament = state.tournaments.find((item) => item.id === id);
+    elements.tournamentSearch.value = tournament?.event?.name ?? '';
+    elements.tournamentSuggestions.innerHTML = '';
+    renderTournamentCards();
+  });
+}
+
+function requestUserLocation() {
+  if (!hasSelectorUi || !navigator.geolocation) {
+    if (elements.locationStatus) elements.locationStatus.textContent = 'Kein Geolocation-Support verfügbar – Vorschläge nur nach Zeit.';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      state.userPosition = { lat: position.coords.latitude, lon: position.coords.longitude };
+      if (elements.locationStatus) elements.locationStatus.textContent = 'Standort erkannt – Vorschläge sind nach Nähe und Zeit sortiert.';
+      renderTournamentCards();
+    },
+    () => {
+      if (elements.locationStatus) elements.locationStatus.textContent = 'Standortfreigabe nicht erteilt – Vorschläge nur nach Zeit sortiert.';
+    },
+    { enableHighAccuracy: false, timeout: 5000, maximumAge: 120000 }
+  );
+}
+
+function validateTournamentData(tournament) {
+  return Boolean(tournament && tournament.id && tournament.event && Array.isArray(tournament.matches));
+}
+
+async function loadJson(path, err) {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error(err);
+  return response.json();
+}
+
+async function loadConfigAndTournaments() {
+  const [config, tournamentData] = await Promise.all([
+    loadJson('./data/config.json', 'Konfiguration konnte nicht geladen werden.'),
+    loadJson('./data/tournaments.json', 'Turnierdaten konnten nicht geladen werden.')
+  ]);
+
+  state.siteTitle = config.siteTitle ?? '';
+  state.tournaments = Array.isArray(tournamentData.tournaments) ? tournamentData.tournaments : [];
+  if (!state.tournaments.length || state.tournaments.some((tournament) => !validateTournamentData(tournament))) {
+    throw new Error('JSON ungültig: Erwartet wird data/tournaments.json mit id, event und matches je Turnier.');
+  }
+}
+
+function renderDetailPages() {
+  const tournamentId = selectedTournamentIdFromUrl() || chooseDefaultTournamentId();
+  const selected = state.tournaments.find((tournament) => tournament.id === tournamentId);
+  if (!selected) throw new Error('Turnier nicht gefunden. Bitte über die Turnier-Auswahl starten.');
+
+  state.selectedTournamentId = selected.id;
+  state.selectedTournament = selected;
+
+  applyTournamentLinksToNav();
+  markActiveNav();
+  applyPageMeta(selected.event ?? {});
+  renderTournamentInfo(selected);
   populateScheduleFilters();
   renderMatches();
   wireScheduleFilters();
+}
+
+function renderSelectorPage() {
   markActiveNav();
+  wireTournamentSelector();
+  renderTournamentCards();
+  requestUserLocation();
+}
+
+async function init() {
+  await loadConfigAndTournaments();
+  applySiteConfig();
+  if (hasSelectorUi) {
+    renderSelectorPage();
+    return;
+  }
+  renderDetailPages();
 }
 
 init().catch((error) => {
-  if (elements.scheduleList) elements.scheduleList.innerHTML = `<p class="hint">${error.message}</p>`;
+  if (elements.scheduleList) elements.scheduleList.innerHTML = `<p class="hint">${escapeHtml(error.message)}</p>`;
+  if (elements.tournamentCards) elements.tournamentCards.innerHTML = `<p class="hint">${escapeHtml(error.message)}</p>`;
   console.error(error);
 });
