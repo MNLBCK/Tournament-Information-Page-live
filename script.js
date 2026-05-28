@@ -32,6 +32,7 @@ const state = {
 
 const hasScheduleUi = Boolean(elements.scheduleList);
 const hasSelectorUi = Boolean(elements.tournamentCards);
+const TOURNAMENT_ID_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 
 const createList = (items = []) => `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
 const setHtml = (node, html) => { if (node) node.innerHTML = html; };
@@ -111,12 +112,14 @@ function haversineKm(from, to) {
 }
 
 function selectedTournamentIdFromUrl() {
-  return new URLSearchParams(location.search).get('t') ?? '';
+  const rawId = new URLSearchParams(location.search).get('t') ?? '';
+  return TOURNAMENT_ID_PATTERN.test(rawId) ? rawId : '';
 }
 
 function pageUrlWithTournament(page, tournamentId) {
-  if (!tournamentId) return page;
-  const params = new URLSearchParams({ t: tournamentId });
+  const safeTournamentId = TOURNAMENT_ID_PATTERN.test(tournamentId ?? '') ? tournamentId : '';
+  if (!safeTournamentId) return page;
+  const params = new URLSearchParams({ t: safeTournamentId });
   return `${page}?${params.toString()}`;
 }
 
@@ -142,9 +145,10 @@ function markActiveNav() {
 
 function applyTournamentLinksToNav() {
   if (!state.selectedTournamentId) return;
+  const allowedPages = new Set(['turnier.html', 'verpflegung.html', 'anfahrt.html', 'spielfeldlayout.html', 'spielplan.html']);
   document.querySelectorAll('.top-nav [data-page]').forEach((el) => {
     const page = el.getAttribute('data-page');
-    if (!page || page === 'index.html') return;
+    if (!page || page === 'index.html' || !allowedPages.has(page)) return;
     el.setAttribute('href', pageUrlWithTournament(page, state.selectedTournamentId));
   });
 }
@@ -343,7 +347,7 @@ function searchableTournamentText(tournament = {}) {
   ].filter(Boolean).join(' ').toLowerCase();
 }
 
-function tournamentSortValue(tournament, now, query) {
+function tournamentSortValue(tournament, now, query, searchableText = '') {
   const status = tournamentStatus(tournament, now);
   const start = kickoffDate(tournament.event ?? {});
   const end = tournamentEndDate(tournament);
@@ -351,7 +355,7 @@ function tournamentSortValue(tournament, now, query) {
   const timeDistance = status.key === 'past'
     ? Math.abs(now.getTime() - (end?.getTime() ?? Number.MAX_SAFE_INTEGER))
     : Math.abs((start?.getTime() ?? Number.MAX_SAFE_INTEGER) - now.getTime());
-  const queryBoost = query && searchableTournamentText(tournament).includes(query) ? 0 : 1;
+  const queryBoost = query && searchableText.includes(query) ? 0 : 1;
 
   return {
     statusRank: status.rank,
@@ -365,10 +369,11 @@ function tournamentSortValue(tournament, now, query) {
 function filterAndSortTournaments() {
   const query = (elements.tournamentSearch?.value ?? '').trim().toLowerCase();
   const now = new Date();
-  const visible = state.tournaments.filter((tournament) => !query || searchableTournamentText(tournament).includes(query));
+  const searchCache = new Map(state.tournaments.map((tournament) => [tournament.id, searchableTournamentText(tournament)]));
+  const visible = state.tournaments.filter((tournament) => !query || (searchCache.get(tournament.id) ?? '').includes(query));
   return visible.sort((a, b) => {
-    const va = tournamentSortValue(a, now, query);
-    const vb = tournamentSortValue(b, now, query);
+    const va = tournamentSortValue(a, now, query, searchCache.get(a.id) ?? '');
+    const vb = tournamentSortValue(b, now, query, searchCache.get(b.id) ?? '');
     return va.statusRank - vb.statusRank
       || va.queryBoost - vb.queryBoost
       || va.distanceRank - vb.distanceRank
@@ -412,6 +417,15 @@ function renderTournamentCards() {
 
     return `<article class="tournament-card"><div class="tournament-meta"><span class="status-badge status-${status.key}">${escapeHtml(status.label)}</span>${distance ? `<span class="distance-label">${escapeHtml(distance)}</span>` : ''}</div><h3>${escapeHtml(event.name ?? 'Turnier')}</h3><p>${escapeHtml(formatDateTimeDE(event.date ?? '', event.startTime ?? ''))}${event.endTime ? ` – ${escapeHtml(event.endTime)} Uhr` : ''}</p><p class="hint">${escapeHtml(event.location ?? '-')}</p><div class="tournament-actions"><a class="button" href="${escapeHtml(detailPath)}">Startseite öffnen</a><a class="button secondary" href="${escapeHtml(schedulePath)}">Spielplan</a></div><p class="direct-link"><strong>Direktlink:</strong> <a href="${escapeHtml(detailPath)}">${escapeHtml(detailUrl)}</a></p><img class="qr-code" src="${escapeHtml(qrUrl)}" alt="QR-Code für ${escapeHtml(event.name ?? 'Turnier')}" loading="lazy" /></article>`;
   }).join('');
+
+  elements.tournamentCards.querySelectorAll('.qr-code').forEach((img) => {
+    img.addEventListener('error', () => {
+      const hint = document.createElement('p');
+      hint.className = 'hint';
+      hint.textContent = 'QR-Code konnte nicht geladen werden. Bitte Direktlink nutzen.';
+      img.replaceWith(hint);
+    }, { once: true });
+  });
 }
 
 function chooseDefaultTournamentId() {
@@ -453,15 +467,22 @@ function requestUserLocation() {
       if (elements.locationStatus) elements.locationStatus.textContent = 'Standort erkannt – Vorschläge sind nach Nähe und Zeit sortiert.';
       renderTournamentCards();
     },
-    () => {
-      if (elements.locationStatus) elements.locationStatus.textContent = 'Standortfreigabe nicht erteilt – Vorschläge nur nach Zeit sortiert.';
+    (error) => {
+      if (!elements.locationStatus) return;
+      if (error.code === error.PERMISSION_DENIED) {
+        elements.locationStatus.textContent = 'Standortfreigabe nicht erteilt – Vorschläge nur nach Zeit sortiert.';
+      } else if (error.code === error.TIMEOUT) {
+        elements.locationStatus.textContent = 'Standortabfrage ist abgelaufen – Vorschläge nur nach Zeit sortiert.';
+      } else {
+        elements.locationStatus.textContent = 'Standort konnte nicht bestimmt werden – Vorschläge nur nach Zeit sortiert.';
+      }
     },
     { enableHighAccuracy: false, timeout: 5000, maximumAge: 120000 }
   );
 }
 
 function validateTournamentData(tournament) {
-  return Boolean(tournament && tournament.id && tournament.event && Array.isArray(tournament.matches));
+  return Boolean(tournament && TOURNAMENT_ID_PATTERN.test(String(tournament.id ?? '')) && tournament.event && Array.isArray(tournament.matches));
 }
 
 async function loadJson(path, err) {
