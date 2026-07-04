@@ -49,7 +49,7 @@
         "title": "Felder und Gruppen",
         "summary": "Gespielt wird parallel auf Feld A, Feld B, Feld C und Feld D.",
         "image": {
-          "url": "https://raw.githubusercontent.com/MNLBCK/Tournament-Information-Page/main/images/layout_skv-hochberg-2026-07-05.png",
+          "url": "images/layout_skv-hochberg-2026-07-05.png",
           "alt": "Spielfeldplan mit den Feldern A bis D."
         },
         "fields": [
