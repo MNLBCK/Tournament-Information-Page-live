@@ -205,7 +205,9 @@ function renderTournamentInfo(tournament = {}) {
 
   const tm = tournament.trainerMeeting ?? {};
   const ac = tournament.awardCeremony ?? {};
-  setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${escapeHtml(tm.time ?? '-')} Uhr, ${escapeHtml(tm.location ?? '-')}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${ac.time ? `, geplant um ${escapeHtml(ac.time)} Uhr` : ''}${ac.location ? ` (${escapeHtml(ac.location)})` : ''}.` : 'Nein.'}</p>`);
+  const awardTime = String(ac.time ?? '').trim();
+  const awardTimeLabel = awardTime && /\buhr\b/i.test(awardTime) ? awardTime : awardTime ? `${awardTime} Uhr` : '';
+  setHtml(elements.orgaInfoContent, `<p><strong>Trainerbesprechung:</strong> ${escapeHtml(tm.time ?? '-')} Uhr, ${escapeHtml(tm.location ?? '-')}</p><p><strong>Siegerehrung:</strong> ${ac.isPlanned ? `Ja${awardTimeLabel ? `, geplant um ${escapeHtml(awardTimeLabel)}` : ''}${ac.location ? ` (${escapeHtml(ac.location)})` : ''}.` : 'Nein.'}</p>`);
 
   const c = tournament.catering ?? {};
   if (Array.isArray(c.categories) && c.categories.length) {
@@ -605,7 +607,9 @@ function validateTournamentData(tournament) {
 }
 
 async function loadJson(path, err) {
-  const response = await fetch(path);
+  const url = new URL(path, window.location.href);
+  url.searchParams.set('v', '2026-07-05-1');
+  const response = await fetch(url.href, { cache: 'no-store' });
   if (!response.ok) throw new Error(err);
   return response.json();
 }
