@@ -51,19 +51,19 @@
         "fields": [
           {
             "field": "Feld A",
-            "group": "6A: SG Hochberg/H'dorf 1, FC Marbach 1, TSV Schwaikheim 1, SGV Murr 1, SG Hochberg/H'dorf 2"
+            "group": "SG Hochberg/H'dorf 1, FC Marbach 1, TSV Schwaikheim 1, SGV Murr 1, SG Hochberg/H'dorf 2"
           },
           {
             "field": "Feld B",
-            "group": "6B: TV Aldingen 1, DjK Ludwigsburg 1, SG Hochberg/H'dorf 3, FC Marbach 2, TSV Schwaikheim 2"
+            "group": "TV Aldingen 1, DjK Ludwigsburg 1, SG Hochberg/H'dorf 3, FC Marbach 2, TSV Schwaikheim 2"
           },
           {
             "field": "Feld C",
-            "group": "6C: MTV Ludwigsburg, SGV Murr 2, TV Aldingen 2, DjK Ludwigsburg 2, TSV Schwaikheim 3"
+            "group": "MTV Ludwigsburg, SGV Murr 2, TV Aldingen 2, DjK Ludwigsburg 2, TSV Schwaikheim 3"
           },
           {
             "field": "Feld D",
-            "group": "6D: TV Aldingen 3, TV Aldingen 4, TSV Schwaikheim 4, SG Hochberg/H'dorf 4, SG Hochberg/H'dorf 5"
+            "group": "TV Aldingen 3, TV Aldingen 4, TSV Schwaikheim 4, SG Hochberg/H'dorf 4, SG Hochberg/H'dorf 5"
           }
         ]
       },
@@ -71,7 +71,7 @@
         {
           "time": "09:30",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 1"
@@ -84,7 +84,7 @@
         {
           "time": "09:30",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 1"
@@ -97,7 +97,7 @@
         {
           "time": "09:30",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "MTV Ludwigsburg",
             "team": "MTV Ludwigsburg"
@@ -110,7 +110,7 @@
         {
           "time": "09:30",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 3"
@@ -123,7 +123,7 @@
         {
           "time": "09:40",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 1"
@@ -136,7 +136,7 @@
         {
           "time": "09:40",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 3"
@@ -149,7 +149,7 @@
         {
           "time": "09:40",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 2"
@@ -162,7 +162,7 @@
         {
           "time": "09:40",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 4"
@@ -175,7 +175,7 @@
         {
           "time": "09:50",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 1"
@@ -188,7 +188,7 @@
         {
           "time": "09:50",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 1"
@@ -201,7 +201,7 @@
         {
           "time": "09:50",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "MTV Ludwigsburg",
             "team": "MTV Ludwigsburg"
@@ -214,7 +214,7 @@
         {
           "time": "09:50",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 3"
@@ -227,7 +227,7 @@
         {
           "time": "10:00",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "FC Marbach",
             "team": "FC Marbach 1"
@@ -240,7 +240,7 @@
         {
           "time": "10:00",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "DjK Ludwigsburg",
             "team": "DjK Ludwigsburg 1"
@@ -253,7 +253,7 @@
         {
           "time": "10:00",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "SGV Murr",
             "team": "SGV Murr 2"
@@ -266,7 +266,7 @@
         {
           "time": "10:00",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 4"
@@ -279,7 +279,7 @@
         {
           "time": "10:10",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SGV Murr",
             "team": "SGV Murr 1"
@@ -292,7 +292,7 @@
         {
           "time": "10:10",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "FC Marbach",
             "team": "FC Marbach 2"
@@ -305,7 +305,7 @@
         {
           "time": "10:10",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "DjK Ludwigsburg",
             "team": "DjK Ludwigsburg 2"
@@ -318,7 +318,7 @@
         {
           "time": "10:10",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 4"
@@ -331,7 +331,7 @@
         {
           "time": "10:20",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 1"
@@ -344,7 +344,7 @@
         {
           "time": "10:20",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 1"
@@ -357,7 +357,7 @@
         {
           "time": "10:20",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "MTV Ludwigsburg",
             "team": "MTV Ludwigsburg"
@@ -370,7 +370,7 @@
         {
           "time": "10:20",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 3"
@@ -383,7 +383,7 @@
         {
           "time": "10:30",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "FC Marbach",
             "team": "FC Marbach 1"
@@ -396,7 +396,7 @@
         {
           "time": "10:30",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "DjK Ludwigsburg",
             "team": "DjK Ludwigsburg 1"
@@ -409,7 +409,7 @@
         {
           "time": "10:30",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "SGV Murr",
             "team": "SGV Murr 2"
@@ -422,7 +422,7 @@
         {
           "time": "10:30",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 4"
@@ -435,7 +435,7 @@
         {
           "time": "10:40",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 2"
@@ -448,7 +448,7 @@
         {
           "time": "10:40",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 2"
@@ -461,7 +461,7 @@
         {
           "time": "10:40",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 3"
@@ -474,7 +474,7 @@
         {
           "time": "10:40",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 5"
@@ -487,7 +487,7 @@
         {
           "time": "10:50",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SGV Murr",
             "team": "SGV Murr 1"
@@ -500,7 +500,7 @@
         {
           "time": "10:50",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "FC Marbach",
             "team": "FC Marbach 2"
@@ -513,7 +513,7 @@
         {
           "time": "10:50",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "DjK Ludwigsburg",
             "team": "DjK Ludwigsburg 2"
@@ -526,7 +526,7 @@
         {
           "time": "10:50",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 4"
@@ -539,7 +539,7 @@
         {
           "time": "11:00",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "FC Marbach",
             "team": "FC Marbach 1"
@@ -552,7 +552,7 @@
         {
           "time": "11:00",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "DjK Ludwigsburg",
             "team": "DjK Ludwigsburg 1"
@@ -565,7 +565,7 @@
         {
           "time": "11:00",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "SGV Murr",
             "team": "SGV Murr 2"
@@ -578,7 +578,7 @@
         {
           "time": "11:00",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 4"
@@ -591,7 +591,7 @@
         {
           "time": "11:10",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 1"
@@ -604,7 +604,7 @@
         {
           "time": "11:10",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 3"
@@ -617,7 +617,7 @@
         {
           "time": "11:10",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 2"
@@ -630,7 +630,7 @@
         {
           "time": "11:10",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 4"
@@ -643,7 +643,7 @@
         {
           "time": "11:20",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SGV Murr",
             "team": "SGV Murr 1"
@@ -656,7 +656,7 @@
         {
           "time": "11:20",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "FC Marbach",
             "team": "FC Marbach 2"
@@ -669,7 +669,7 @@
         {
           "time": "11:20",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "DjK Ludwigsburg",
             "team": "DjK Ludwigsburg 2"
@@ -682,7 +682,7 @@
         {
           "time": "11:20",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 4"
@@ -695,7 +695,7 @@
         {
           "time": "11:30",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 2"
@@ -708,7 +708,7 @@
         {
           "time": "11:30",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 2"
@@ -721,7 +721,7 @@
         {
           "time": "11:30",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 3"
@@ -734,7 +734,7 @@
         {
           "time": "11:30",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 5"
@@ -747,7 +747,7 @@
         {
           "time": "11:40",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 1"
@@ -760,7 +760,7 @@
         {
           "time": "11:40",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 3"
@@ -773,7 +773,7 @@
         {
           "time": "11:40",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "TV Aldingen",
             "team": "TV Aldingen 2"
@@ -786,7 +786,7 @@
         {
           "time": "11:40",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 4"
@@ -799,7 +799,7 @@
         {
           "time": "11:50",
           "field": "Feld A",
-          "group": "6A",
+          "group": "A",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 2"
@@ -812,7 +812,7 @@
         {
           "time": "11:50",
           "field": "Feld B",
-          "group": "6B",
+          "group": "B",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 2"
@@ -825,7 +825,7 @@
         {
           "time": "11:50",
           "field": "Feld C",
-          "group": "6C",
+          "group": "C",
           "home": {
             "club": "TSV Schwaikheim",
             "team": "TSV Schwaikheim 3"
@@ -838,7 +838,7 @@
         {
           "time": "11:50",
           "field": "Feld D",
-          "group": "6D",
+          "group": "D",
           "home": {
             "club": "SG Hochberg/H'dorf",
             "team": "SG Hochberg/H'dorf 5"
