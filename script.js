@@ -60,7 +60,7 @@ const formatDateTimeDE = (isoDate = '', time = '') => {
 function safeImageUrl(value = '') {
   try {
     const url = new URL(value, window.location.href);
-    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    return ['http:', 'https:', 'file:'].includes(url.protocol) ? url.href : '';
   } catch {
     return '';
   }
