@@ -6,6 +6,11 @@ cd "$ROOT_DIR"
 
 echo "[1/4] JSON-Dateien validieren"
 python3 -m json.tool data/config.json >/dev/null
+python3 -m json.tool data/event.json >/dev/null
+python3 -m json.tool data/catering.json >/dev/null
+python3 -m json.tool data/anfahrt.json >/dev/null
+python3 -m json.tool data/spielfeldlayout.json >/dev/null
+python3 -m json.tool data/spielplan.json >/dev/null
 python3 -m json.tool data/tournaments.json >/dev/null
 
 echo "[2/4] Referenzierte Seiten prüfen"
@@ -31,7 +36,7 @@ if [[ $missing -ne 0 ]]; then
 fi
 
 echo "[3/4] Asset-Dateien prüfen"
-required_assets=(styles.css script.js favicon.svg Host_Logo.png)
+required_assets=(styles.css script.js logo.svg favicon.svg)
 for asset in "${required_assets[@]}"; do
   [[ -f "$asset" ]] || { echo "Fehlendes Asset: $asset"; exit 1; }
 done

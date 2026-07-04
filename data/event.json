@@ -1,0 +1,22 @@
+{
+  "quickInfo": [
+    "Jahrgänge 2019 und jünger.",
+    "Anpfiff nur im 1. Spiel, danach selbstorganisierter Spielstart.",
+    "Spielzeit 9 Minuten.",
+    "Wechselzeit 1 Minute.",
+    "Abpfiff alle 10 Minuten.",
+    "Kein Eckball, verteidigende Mannschaft spielt hinten raus.",
+    "Bei Seitenaus: eindribbeln; 3 Meter Abstand",
+    "Eltern bleiben hinter den Stangen!",
+    "Coaching-Zone zwischen den Feldern"
+  ],
+  "trainerMeeting": {
+    "time": "09:45",
+    "location": "hinter Feld C"
+  },
+  "awardCeremony": {
+    "isPlanned": false,
+    "time": "",
+    "location": ""
+  }
+}

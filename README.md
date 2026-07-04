@@ -26,8 +26,8 @@ Turniere werden über den Query-Parameter `?t=<turnier-id>` ausgewählt. Damit s
   - `quickInfo`, `trainerMeeting`, `awardCeremony`
   - `catering`, `directions`, `fieldLayout`
   - `matches`
-- Das Spielfeldbild wird pro Turnier unter `fieldLayout.image.url` gesetzt, z. B. `images/spielfeldlayout.png`
-- Empfohlene Ablage für solche Bilder: `images/` im Projektwurzelverzeichnis
+
+Bestehende Einzeldateien unter `data/*.json` bleiben als Referenz erhalten.
 
 ## Projektstruktur
 
